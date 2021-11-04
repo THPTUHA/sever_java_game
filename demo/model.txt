@@ -1,0 +1,17 @@
+create table user(
+	id int auto_increment key,
+    first_name char(255),
+    last_name char(255),
+    email char(255),
+    password char(255),
+    role text,
+    address char(255),
+    phone char(255),
+    discription text,
+    sex int,
+    facebook text,
+    last_login date,
+    expired boolean,
+    locked boolean,
+    enabled boolean
+);
