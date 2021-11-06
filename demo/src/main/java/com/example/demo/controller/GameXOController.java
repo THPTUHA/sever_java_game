@@ -21,19 +21,9 @@ public class GameXOController {
     @Autowired
     private GameXOService gameXOService;
 
-    private int id_room_playing=1;
     @PostMapping("/start")
-    public GameXORes startGame(@RequestBody GameXORequest gameXORequest){
-        System.out.println(gameXORequest);
-        gameXOService.printWait();
-        gameXOService.printPlaying();
-        if(!gameXOService.isWating()){
-            gameXOService.creatGame(this.id_room_playing, gameXORequest.getId_user());
-            return new GameXORes(this.id_room_playing,1);
-        }
-       int id_match = gameXOService.connectGame(gameXORequest.getId_user());
-       this.id_room_playing++;
-       return new GameXORes(id_match,2);
+    public GameXORes startGame(@RequestBody GameXORequest gameXORequest){ 
+       return  gameXOService.connectGame(gameXORequest);
     }
 
 
