@@ -6,8 +6,7 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-
-public class CORSFilter extends GenericFilterBean  {
+public class CORSFilter extends GenericFilterBean {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -24,6 +23,5 @@ public class CORSFilter extends GenericFilterBean  {
 
         chain.doFilter(request, response);
     }
-
 
 }

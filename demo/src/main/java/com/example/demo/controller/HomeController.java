@@ -34,15 +34,11 @@ public class HomeController {
     private JwtTokenProvider tokenProvider;
     @Autowired
     private PasswordEncoder passwordEncoder;
-    
+
     @PostMapping("/login")
     public LoginResponse authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getEmail(),
-                        loginRequest.getPassword()
-                )
-        );
+                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = tokenProvider.generateToken((CustomUserDetails) authentication.getPrincipal());
@@ -51,7 +47,8 @@ public class HomeController {
     }
 
     @PostMapping("/register")
-    public String signUp(@RequestBody User user){
+    public String signUp(@RequestBody User user) {
+        System.out.println(user);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return "Success";
