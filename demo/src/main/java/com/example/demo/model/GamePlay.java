@@ -47,6 +47,7 @@ public class GamePlay {
         this.id_game=id_game;
         this.player=String.format("%d", id_user1);
         this.status=id_user1;
+        this.user_num=1;
     }
 
     // public connectGame(int id_user2){
