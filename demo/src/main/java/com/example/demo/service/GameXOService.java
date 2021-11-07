@@ -42,7 +42,7 @@ public class GameXOService {
        final int id_match=macth.getId();
        playing.put(id_match,new GameXOPlaying(id_match, macth.getStatus(), id_user));
        macth.setPlayer(id_user);
-       gamePlayReposity.updatePlayGame(id_match, macth.getPlayer(), -1);
+       gamePlayReposity.updatePlayGame(id_match, macth.getPlayer(), -1,2);
        return new GameXORes(macth.getId(), TYPE_2);
    }
    
@@ -67,14 +67,22 @@ public class GameXOService {
                 if(cnt>=n)return true;
             }
          }
-         int cross1=0,cross2=0;
-         for( i=0;i<size;++i)
+         int cross=0;
+         for( i=1-size;i<size;++i)
           {
-            cross1=cross2=0;
+            cross=0;
             for( j=0;j<size;++j){
-                if(j>=i&&board[j][j-i]==type)cross1++;else cross1=0;
-                if(j>=i&&board[j-i][j]==type)cross2++;else cross2=0;
-                if(cross1>=n||cross2>=n)return true;
+                if(j+i>=0&&j+i<size&&board[j+i][j]==type)cross++;else cross=0;
+                if(cross>=n)return true;
+            }
+          }
+
+          for( i=0;i<2*size-1;++i)
+          {
+            cross=0;
+            for( j=0;j<size;++j){
+                if(i-j>=0&&i-j<size&&board[i-j][j]==type)cross++;else cross=0;
+                if(cross>=n)return true;
             }
           }
         return false;
@@ -94,9 +102,7 @@ public class GameXOService {
        int[][]board=gameXOPlaying.getBoard();
        int size=gameXOPlaying.getSizeBoard();
        int n=gameXOPlaying.getConditionWin();
-       if(checkWinner(board, size, n, 1)){
-           
-       }
+       if(checkWinner(board, size, n, 1))return 1;
        if(checkWinner(board, size, n, 2))return 2;
        if(checkDraw(board, size))return -1;
        return 0;
