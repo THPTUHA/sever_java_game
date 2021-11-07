@@ -5,11 +5,8 @@ import com.example.demo.model.GameXO;
 public class GameXOPlaying {
     private GameXO game;
     private int turn=1;
-    public GameXOPlaying(int id_match,int id_user1){
-        this.game=new GameXO(id_match,id_user1);
-    }
-    public void addUser2(int id_user2){
-        this.game.setId_user2(id_user2);
+    public GameXOPlaying(int id_match,int id_user1,int id_user2){
+        this.game=new GameXO(id_match,id_user1,id_user2);
     }
 
     public int getSizeBoard(){

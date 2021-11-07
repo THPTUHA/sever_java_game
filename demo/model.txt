@@ -13,5 +13,18 @@ create table user(
     last_login date,
     expired boolean,
     locked boolean,
-    enabled boolean
+    enabled boolean,
+    exp long,
+    gold long
+);
+
+
+create table play(
+	id int auto_increment key,
+	id_game int ,
+	player text ,
+    user_num int,
+    winner int,
+    status int,
+    start_time datetime
 );

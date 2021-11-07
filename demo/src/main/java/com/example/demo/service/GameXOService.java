@@ -6,27 +6,44 @@ import java.util.List;
 import java.util.Map;
 
 import com.example.demo.gamexo.GameXOPlaying;
+import com.example.demo.gamexo.GameXORequest;
+import com.example.demo.gamexo.GameXORes;
+import com.example.demo.model.GamePlay;
+import com.example.demo.repository.GamePlayReposity;
 
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class GameXOService {
-   private List<GameXOPlaying>wait=new ArrayList<>();
+    @Autowired
+   private GamePlayReposity gamePlayReposity;
+   
+   private final int IdGameXO=1;
+   private final int TYPE_1=1;
+   private final int TYPE_2=2;
    private Map<Integer,GameXOPlaying>playing=new HashMap<>();
 
-   public boolean isWating(){
-       return wait.size()!=0;
+   private GamePlay getMatch(){
+       return gamePlayReposity.getOneGamePlay();
    }
-   public void creatGame(int id_match,int id_user1){
-        wait.add(new GameXOPlaying(id_match,id_user1));
+
+   private int creatGame(int id_user1){
+       gamePlayReposity.save(new GamePlay(IdGameXO,id_user1));
+       return gamePlayReposity.getOneMatch(id_user1).getId();
    }
-   public int connectGame(int id_user2){
-       GameXOPlaying tmp=wait.get(0);
-        tmp.addUser2(id_user2);
-        playing.put(tmp.getIdmatch(),tmp);
-        wait=new ArrayList<>();
-        return tmp.getIdmatch();
+
+   public GameXORes connectGame(GameXORequest gameXORequest){
+       GamePlay macth=getMatch();
+       final int id_user=gameXORequest.getId_user();
+       if(macth==null){
+           return new GameXORes(creatGame(gameXORequest.getId_user()), TYPE_1);
+       }
+       final int id_match=macth.getId();
+       playing.put(id_match,new GameXOPlaying(id_match, macth.getStatus(), id_user));
+       macth.setPlayer(id_user);
+       gamePlayReposity.updatePlayGame(id_match, macth.getPlayer(), -1);
+       return new GameXORes(macth.getId(), TYPE_2);
    }
    
    public GameXOPlaying matchPlaying(int id_match){
@@ -77,16 +94,18 @@ public class GameXOService {
        int[][]board=gameXOPlaying.getBoard();
        int size=gameXOPlaying.getSizeBoard();
        int n=gameXOPlaying.getConditionWin();
-       if(checkWinner(board, size, n, 1))return 1;
+       if(checkWinner(board, size, n, 1)){
+           
+       }
        if(checkWinner(board, size, n, 2))return 2;
        if(checkDraw(board, size))return -1;
        return 0;
    }
-   public void printWait(){
-       for(GameXOPlaying g:wait){
-           System.out.println(g);
-       }
-   }
+//    public void printWait(){
+//        for(GameXOPlaying g:wait){
+//            System.out.println(g);
+//        }
+//    }
    public void printPlaying(){
     for(Map.Entry<Integer,GameXOPlaying> g:playing.entrySet()){
         System.out.println(g);
