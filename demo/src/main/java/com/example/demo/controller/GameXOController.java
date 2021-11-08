@@ -16,26 +16,33 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/xo")
 public class GameXOController {
-    @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
-    @Autowired
-    private GameXOService gameXOService;
+  @Autowired
+  private SimpMessagingTemplate simpMessagingTemplate;
+  @Autowired
+  private GameXOService gameXOService;
 
-    @PostMapping("/start")
-    public GameXORes startGame(@RequestBody GameXORequest gameXORequest){ 
-       return  gameXOService.connectGame(gameXORequest);
-    }
+  @PostMapping("/start")
+  public GameXORes startGame(@RequestBody GameXORequest gameXORequest) {
+    return gameXOService.connectGame(gameXORequest);
+  }
 
-
-    @MessageMapping("/xo/1/**")
-    public void playing(GameXORequest gameXORequest) throws Exception {
+  @MessageMapping("/xo/1/**")
+  public void playing(GameXORequest gameXORequest) throws Exception {
     System.out.println(gameXORequest);
     GameXOPlaying gameXOPlaying = gameXOService.matchPlaying(gameXORequest.getId_match());
-    if(gameXORequest.getType()==gameXOPlaying.getTurn()){
+
+    if(gameXORequest.getStatus()==1){
+      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + gameXORequest.getId_match(),
+      new GameXORes(gameXOPlaying));
+    }
+
+    if (gameXOPlaying != null && gameXORequest.getType() == gameXOPlaying.getTurn()) {
       gameXOPlaying.play(gameXORequest.getCoordinateX(), gameXORequest.getCoordinateY());
       gameXOPlaying.setTurn();
-      int winner=gameXOService.winner(gameXOPlaying);
-      simpMessagingTemplate.convertAndSend("/topic/xo/1/"+gameXORequest.getId_match(),new GameXORes(gameXORequest.getId_match(),gameXOPlaying.getBoard(),winner));
+      int winner = gameXOPlaying.winner();
+      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + gameXORequest.getId_match(),
+          new GameXORes(gameXORequest.getId_match(), gameXOPlaying.getBoard(), winner));
     }
+
   }
 }

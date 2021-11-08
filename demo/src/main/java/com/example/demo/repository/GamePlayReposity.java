@@ -12,8 +12,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface GamePlayReposity extends JpaRepository<GamePlay,Integer>{
-    @Query(value = "SELECT * FROM play p WHERE p.user_num<2 LIMIT 1",nativeQuery = true)
-    GamePlay getOneGamePlay();
+    @Query(value = "SELECT * FROM play p WHERE p.user_num<:user_num and p.id_game=:id_game LIMIT 1",nativeQuery = true)
+    GamePlay getOneGamePlay(@Param("user_num")int user_num,@Param("id_game")int id_game);
     @Query(value = "SELECT * FROM play p WHERE p.status=:status LIMIT 1",nativeQuery = true)
     GamePlay getOneMatch(@Param("status")int status);
     @Modifying
