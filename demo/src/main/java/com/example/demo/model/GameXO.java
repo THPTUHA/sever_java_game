@@ -1,30 +1,29 @@
 package com.example.demo.model;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
 public class GameXO {
+    @Value("${GameXO.id}")
     private int id;
-    private int id_match;
-    private int id_user1;
-    private int id_user2;
+
     private final int size_board = 3;
     private final int condition_win = 3;
+    private final int user_num = 2;
     private int[][] board;
 
-    public GameXO(int id_match,int id_user1,int id_user2){
-        this.id_match=id_match;
-        this.id_user1=id_user1;
-        this.id_user2=id_user2;
+    public GameXO(){
         this.board=new int[this.size_board][this.size_board];
     }
     public int getSize_board(){return this.size_board;}
     public int getId(){return this.id;}
     public int getCondition_win(){return this.condition_win;}
-    public int getId_match(){return this.id_match;}
-    public int getId_user1(){return this.id_user1;}
-    public int getId_user2(){return this.id_user2;}
+    public int getUser_num(){return this.user_num;}
     public int[][] getBoard(){return this.board;}
     public void setBoard(int x,int y,int type){board[x][y] = type;}
-    @Override 
-    public String toString(){
-        return "idMatch: "+this.id_match+ "\nidUser1:"+this.id_user1+"\nidUser2:"+this.id_user2;
-    }
+    // @Override 
+    // public String toString(){
+    //     return "idMatch: "+this.id_match+ "\nidUser1:"+getId_user1() +"\nidUser2:"+getId_user2();
+    // }
 }

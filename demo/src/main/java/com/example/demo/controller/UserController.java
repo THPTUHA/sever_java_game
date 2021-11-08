@@ -52,14 +52,14 @@ public class UserController {
         return "403";
     }
     
-    @PostMapping("/play_public")
-    public String test(@RequestBody GamePlay gamePlay){
-        // System.out.println(gamePlay);
-        if(gamePlayReposity.getOneGamePlay()!=null)
-       {
-        GamePlay gamePlay2=gamePlayReposity.getOneGamePlay() ;
-        System.out.println(gamePlay2);
-       }
-        return "ok";
-    }
+    // @PostMapping("/play_public")
+    // public String test(@RequestBody GamePlay gamePlay){
+    //     // System.out.println(gamePlay);
+    //     if(gamePlayReposity.getOneGamePlay()!=null)
+    //    {
+    //     GamePlay gamePlay2=gamePlayReposity.getOneGamePlay() ;
+    //     System.out.println(gamePlay2);
+    //    }
+    //     return "ok";
+    // }
 }

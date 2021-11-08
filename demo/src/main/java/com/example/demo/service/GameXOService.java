@@ -1,15 +1,16 @@
 package com.example.demo.service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.example.demo.gamexo.GameXOPlaying;
 import com.example.demo.gamexo.GameXORequest;
 import com.example.demo.gamexo.GameXORes;
 import com.example.demo.model.GamePlay;
+import com.example.demo.model.GameXO;
+import com.example.demo.model.User;
 import com.example.demo.repository.GamePlayReposity;
+import com.example.demo.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,104 +18,51 @@ import org.springframework.stereotype.Service;
 @Service
 public class GameXOService {
     @Autowired
-   private GamePlayReposity gamePlayReposity;
-   
-   private final int IdGameXO=1;
-   private final int TYPE_1=1;
-   private final int TYPE_2=2;
-   private Map<Integer,GameXOPlaying>playing=new HashMap<>();
+    private GamePlayReposity gamePlayReposity;
+    @Autowired
+    private GameXO gameXO;
+    @Autowired
+    private UserRepository userRepository;
 
-   private GamePlay getMatch(){
-       return gamePlayReposity.getOneGamePlay();
-   }
+    private Map<Integer, GameXOPlaying> playing = new HashMap<>();
 
-   private int creatGame(int id_user1){
-       gamePlayReposity.save(new GamePlay(IdGameXO,id_user1));
-       return gamePlayReposity.getOneMatch(id_user1).getId();
-   }
-
-   public GameXORes connectGame(GameXORequest gameXORequest){
-       GamePlay macth=getMatch();
-       final int id_user=gameXORequest.getId_user();
-       if(macth==null){
-           return new GameXORes(creatGame(gameXORequest.getId_user()), TYPE_1);
-       }
-       final int id_match=macth.getId();
-       playing.put(id_match,new GameXOPlaying(id_match, macth.getStatus(), id_user));
-       macth.setPlayer(id_user);
-       gamePlayReposity.updatePlayGame(id_match, macth.getPlayer(), -1,2);
-       return new GameXORes(macth.getId(), TYPE_2);
-   }
-   
-   public GameXOPlaying matchPlaying(int id_match){
-        return playing.get(id_match);
-   }
-   private boolean checkWinner(int[][] board,int size,int n,int type ){
-       int cnt=0,i=0,j=0;
-        for(i=0;i<size;++i)
-         {
-            cnt=0;
-            for( j=0;j<size;++j){
-                if(board[i][j]==type)cnt++;else cnt=0;
-                if(cnt>=n)return true;
-            }
-         }
-        for( i=0;i<size;++i)
-         {
-            cnt=0;
-            for( j=0;j<size;++j){
-                if(board[j][i]==type)cnt++;else cnt=0;
-                if(cnt>=n)return true;
-            }
-         }
-         int cross=0;
-         for( i=1-size;i<size;++i)
-          {
-            cross=0;
-            for( j=0;j<size;++j){
-                if(j+i>=0&&j+i<size&&board[j+i][j]==type)cross++;else cross=0;
-                if(cross>=n)return true;
-            }
-          }
-
-          for( i=0;i<2*size-1;++i)
-          {
-            cross=0;
-            for( j=0;j<size;++j){
-                if(i-j>=0&&i-j<size&&board[i-j][j]==type)cross++;else cross=0;
-                if(cross>=n)return true;
-            }
-          }
-        return false;
-   }
-
-   private boolean checkDraw(int[][] board,int size){
-        int i=0,j=0;
-        for(i=0;i<size;++i)
-        {
-            for( j=0;j<size;++j){
-                if(board[i][j]==0)return false;
-            }
-        }
-        return true;
-   }
-   public int winner(GameXOPlaying gameXOPlaying){
-       int[][]board=gameXOPlaying.getBoard();
-       int size=gameXOPlaying.getSizeBoard();
-       int n=gameXOPlaying.getConditionWin();
-       if(checkWinner(board, size, n, 1))return 1;
-       if(checkWinner(board, size, n, 2))return 2;
-       if(checkDraw(board, size))return -1;
-       return 0;
-   }
-//    public void printWait(){
-//        for(GameXOPlaying g:wait){
-//            System.out.println(g);
-//        }
-//    }
-   public void printPlaying(){
-    for(Map.Entry<Integer,GameXOPlaying> g:playing.entrySet()){
-        System.out.println(g);
+    private GamePlay getMatch() {
+        return gamePlayReposity.getOneGamePlay(gameXO.getUser_num(), gameXO.getId());
     }
-}
+
+    private int creatGame(int id_user1) {
+        gamePlayReposity.save(new GamePlay(gameXO.getId(), id_user1));
+        return gamePlayReposity.getOneMatch(id_user1).getId();
+    }
+
+    public GameXORes connectGame(GameXORequest gameXORequest) {
+        GamePlay macth = getMatch();
+        final int id_user = gameXORequest.getId_user();
+        if (macth == null) {
+            return new GameXORes(creatGame(gameXORequest.getId_user()), 1, 0);
+        }
+        final int id_match = macth.getId();
+        User user1=userRepository.findById(macth.getStatus());
+        User user2=userRepository.findById(id_user);
+
+        playing.put(id_match, new GameXOPlaying(id_match, user1, user2));
+        macth.setPlayer(id_user);
+        gamePlayReposity.updatePlayGame(id_match, macth.getPlayer(), -1, 2);
+        return new GameXORes(id_match,2,1);
+    }
+
+    public GameXOPlaying matchPlaying(int id_match) {
+        return playing.get(id_match);
+    }
+
+    // public void printWait(){
+    // for(GameXOPlaying g:wait){
+    // System.out.println(g);
+    // }
+    // }
+    public void printPlaying() {
+        for (Map.Entry<Integer, GameXOPlaying> g : playing.entrySet()) {
+            System.out.println(g);
+        }
+    }
 }
