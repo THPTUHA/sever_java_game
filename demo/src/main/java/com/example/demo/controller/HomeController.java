@@ -54,6 +54,7 @@ public class HomeController {
 
     @PostMapping("/register")
     public String signUp(@RequestBody User user){
+        System.out.println(user);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return "Success";

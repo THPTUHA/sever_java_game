@@ -33,6 +33,10 @@ public class GameXOPlaying {
         return this.game.getBoard();
     }
 
+    public void setBoard() {
+        this.game.resetBoard();
+    }
+
     public int getTurn() {
         return this.turn;
     }

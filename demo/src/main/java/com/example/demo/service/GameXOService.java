@@ -30,7 +30,7 @@ public class GameXOService {
         return gamePlayReposity.getOneGamePlay(gameXO.getUser_num(), gameXO.getId());
     }
 
-    private int creatGame(int id_user1) {
+    public int creatGame(int id_user1) {
         gamePlayReposity.save(new GamePlay(gameXO.getId(), id_user1));
         return gamePlayReposity.getOneMatch(id_user1).getId();
     }
@@ -55,6 +55,9 @@ public class GameXOService {
         return playing.get(id_match);
     }
 
+    public void deletePlaying(int id_match) {
+        playing.remove(id_match);
+    }
     // public void printWait(){
     // for(GameXOPlaying g:wait){
     // System.out.println(g);

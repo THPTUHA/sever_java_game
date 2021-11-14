@@ -8,6 +8,7 @@ public class GameXORes {
     private int status;
     private GameXOPlayer player1;
     private GameXOPlayer player2;
+    private String user_name;
 
     public GameXORes(int id_match, int type, int status) {
         this.id_match = id_match;
@@ -25,6 +26,15 @@ public class GameXORes {
         this.id_match = id_match;
         this.board = board;
         this.winner = winner;
+    }
+
+    public GameXORes(String user_name,int status) {
+        this.user_name=user_name;
+        this.status=status;
+    }
+
+    public GameXORes(int status) {
+        this.status=status;
     }
 
     public int getWinner() {
@@ -53,5 +63,9 @@ public class GameXORes {
 
     public GameXOPlayer getPlayer2() {
         return this.player2;
+    }
+
+    public String getUser_name() {
+        return this.user_name;
     }
 }
