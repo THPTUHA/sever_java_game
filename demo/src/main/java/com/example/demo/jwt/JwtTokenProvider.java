@@ -1,6 +1,9 @@
 package com.example.demo.jwt;
 
+import java.io.IOException;
 import java.util.Date;
+
+import javax.servlet.http.HttpServletResponse;
 
 import com.example.demo.model.CustomUserDetails;
 
@@ -36,12 +39,13 @@ public class JwtTokenProvider {
 
         return Integer.parseInt(claims.getSubject());
     }
-    public boolean validateToken(String authToken) {
+    public boolean validateToken(String authToken, HttpServletResponse response) throws IOException {
         try {
             Jwts.parser().setSigningKey(JWT_SECRET).parseClaimsJws(authToken);
             return true;
         } catch (MalformedJwtException ex) {
             System.out.println("Invalid JWT token");
+            response.setStatus(403);;
         } catch (ExpiredJwtException ex) {
             System.out.println("Expired JWT token");
         } catch (UnsupportedJwtException ex) {

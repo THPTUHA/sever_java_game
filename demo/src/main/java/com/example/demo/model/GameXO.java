@@ -22,6 +22,9 @@ public class GameXO {
     public int getUser_num(){return this.user_num;}
     public int[][] getBoard(){return this.board;}
     public void setBoard(int x,int y,int type){board[x][y] = type;}
+    public void resetBoard(){
+        this.board=new int[this.size_board][this.size_board];
+    }
     // @Override 
     // public String toString(){
     //     return "idMatch: "+this.id_match+ "\nidUser1:"+getId_user1() +"\nidUser2:"+getId_user2();
