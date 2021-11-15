@@ -15,10 +15,17 @@ public class GameXOPlaying {
         this.id_match = id_match;
         this.player1 = new GameXOPlayer(user1, 1);
         this.player2 = new GameXOPlayer(user2, 2);
+
     }
 
     public int getIdmatch() {
         return this.id_match;
+    }
+
+    public GameXOPlayer getPlayer(int type) {
+        if (type == 1)
+            return this.player1;
+        return this.player2;
     }
 
     public GameXOPlayer getPlayer1() {
