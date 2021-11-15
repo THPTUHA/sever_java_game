@@ -4,6 +4,7 @@ import com.example.demo.gamexo.GameXOPlayer;
 import com.example.demo.gamexo.GameXOPlaying;
 import com.example.demo.gamexo.GameXORequest;
 import com.example.demo.gamexo.GameXORes;
+import com.example.demo.repository.GamePlayReposity;
 import com.example.demo.service.GameXOService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ public class GameXOController {
   private SimpMessagingTemplate simpMessagingTemplate;
   @Autowired
   private GameXOService gameXOService;
+  @Autowired
+  private GamePlayReposity gamePlayReposity;
 
   @PostMapping("/start")
   public GameXORes startGame(@RequestBody GameXORequest gameXORequest) {
@@ -32,8 +35,17 @@ public class GameXOController {
     System.out.println(gameXORequest);
     int id_match = gameXORequest.getId_match();
     GameXOPlaying gameXOPlaying = gameXOService.matchPlaying(id_match);
+
     if (gameXOPlaying == null)
       return;
+
+    if(gameXORequest.getMessage()!=""){
+      System.out.println("Messs");
+      GameXOPlayer player = gameXOPlaying.getPlayer(gameXORequest.getType());
+      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new GameXORes(player,gameXORequest.getMessage()));
+      return ;
+    }
+
     if (gameXORequest.getStatus() == 1) {
       simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new GameXORes(gameXOPlaying));
       return;
@@ -41,8 +53,13 @@ public class GameXOController {
 
     // khi 1 player huỷ trận
     if (gameXORequest.getStatus() == 2) {
+      if(gameXOPlaying.getStatus()==-1){
+        gameXOPlaying.setStatus(-2);
+        gamePlayReposity.finishPlayGame(id_match, -2);
+      }else{
+         gameXOService.deletePlaying(id_match);
+      }
       GameXOPlayer player = gameXOPlaying.getPlayer(gameXORequest.getType());
-      gameXOService.deletePlaying(id_match);
       simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new GameXORes(player, gameXORequest.getStatus()));
       return;
     }

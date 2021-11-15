@@ -45,7 +45,7 @@ public class GameXOService {
         User user1=userRepository.findById(macth.getStatus());
         User user2=userRepository.findById(id_user);
 
-        playing.put(id_match, new GameXOPlaying(id_match, user1, user2));
+        playing.put(id_match, new GameXOPlaying(id_match, user1, user2,-1));
         macth.setPlayer(id_user);
         gamePlayReposity.updatePlayGame(id_match, macth.getPlayer(), -1, 2);
         return new GameXORes(id_match,2,1);

@@ -9,13 +9,14 @@ public class GameXOPlaying {
     private GameXOPlayer player1;
     private GameXOPlayer player2;
     private int turn = 1;
+    private int status = 0;
 
-    public GameXOPlaying(int id_match, User user1, User user2) {
+    public GameXOPlaying(int id_match, User user1, User user2, int status) {
         this.game = new GameXO();
         this.id_match = id_match;
         this.player1 = new GameXOPlayer(user1, 1);
         this.player2 = new GameXOPlayer(user2, 2);
-
+        this.status = status;
     }
 
     public int getIdmatch() {
@@ -54,6 +55,14 @@ public class GameXOPlaying {
 
     public void setTurn() {
         this.turn = 3 - this.turn;
+    }
+
+    public void setStatus(int status) {
+        this.status=status;
+    }
+
+    public int getStatus() {
+       return this.status;
     }
 
     private boolean checkWinner(int[][] board, int size, int n, int type) {

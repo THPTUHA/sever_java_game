@@ -9,7 +9,8 @@ public class GameXORes {
     private GameXOPlayer player1;
     private GameXOPlayer player2;
     private String user_name;
-
+    private String message;
+    
     public GameXORes(int id_match, int type, int status) {
         this.id_match = id_match;
         this.type = type;
@@ -31,6 +32,11 @@ public class GameXORes {
     public GameXORes(GameXOPlayer player1,int status) {
         this.player1=player1;
         this.status=status;
+    }
+
+    public GameXORes(GameXOPlayer player,String message) {
+        this.player1=player;
+        this.message=message;
     }
 
     public GameXORes(int status) {
@@ -67,5 +73,9 @@ public class GameXORes {
 
     public String getUser_name() {
         return this.user_name;
+    }
+
+    public String getMessage() {
+        return this.message;
     }
 }

@@ -20,4 +20,8 @@ public interface GamePlayReposity extends JpaRepository<GamePlay,Integer>{
     @Transactional
     @Query(value = "UPDATE play p SET p.player=:player, p.status=:status , p.user_num=:user_num WHERE p.id=:id",nativeQuery = true)
     void updatePlayGame(@Param("id")int id, @Param("player")String player,@Param("status")int status,@Param("user_num")int user_num);
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE play p SET  p.status=:status  WHERE p.id=:id",nativeQuery = true)
+    void finishPlayGame(@Param("id")int id,@Param("status")int status);
 }
