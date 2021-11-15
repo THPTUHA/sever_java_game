@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.gamexo.GameXOPlayer;
 import com.example.demo.gamexo.GameXOPlaying;
 import com.example.demo.gamexo.GameXORequest;
 import com.example.demo.gamexo.GameXORes;
@@ -31,7 +32,7 @@ public class GameXOController {
     System.out.println(gameXORequest);
     int id_match =gameXORequest.getId_match();
     GameXOPlaying gameXOPlaying = gameXOService.matchPlaying(id_match);
-
+    if(gameXOPlaying==null)return ;
     if(gameXORequest.getStatus()==1){
       simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match,
       new GameXORes(gameXOPlaying));
@@ -40,9 +41,10 @@ public class GameXOController {
 
     // khi 1 player huỷ trận
     if(gameXORequest.getStatus()==2){
+      GameXOPlayer player1= gameXOPlaying.getPlayer1();
       gameXOService.deletePlaying(id_match);
       simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match,
-      new GameXORes(gameXORequest.getUser_name(),gameXORequest.getStatus()));
+      new GameXORes(player1,gameXORequest.getStatus()));
     }
     
     // khi 1 đổi thủ sẵn sàng trận mới

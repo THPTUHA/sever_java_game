@@ -28,8 +28,8 @@ public class GameXORes {
         this.winner = winner;
     }
 
-    public GameXORes(String user_name,int status) {
-        this.user_name=user_name;
+    public GameXORes(GameXOPlayer player1,int status) {
+        this.player1=player1;
         this.status=status;
     }
 
