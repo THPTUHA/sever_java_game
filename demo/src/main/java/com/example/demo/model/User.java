@@ -52,6 +52,8 @@ public class User implements Serializable{
     private long exp;
     @Column(name="gold")
     private long gold;
+    // @Column(name="status")
+    // private int status;
 
     public User(){}
     public User(String eamil,String password){
@@ -72,6 +74,8 @@ public class User implements Serializable{
     public long getExp(){return this.exp;}
     public long getGold(){return this.gold;}
     public void setPassword(String password){this.password=password;}
+    // public int getStatus(){return this.status;}
+    // public void setStatus(int status){ this.status = status;}
     @Override
     public String toString(){
         return "id: "+ id + "\nfirst_name: "+ first_name+"\nlast_name:"+last_name+"\nemail: "+email

@@ -21,14 +21,16 @@ public class GameXORes {
         this.id_match = gameXOPlaying.getIdmatch();
         this.player1 = gameXOPlaying.getPlayer1();
         this.player2 = gameXOPlaying.getPlayer2();
+        this.board = gameXOPlaying.getBoard();
         this.status =gameXOPlaying.getStatus();
     }
 
-    public GameXORes(int id_match, int[][] board, int winner,int status) {
+    public GameXORes(int id_match, int[][] board,int turn, int winner,int status) {
         this.id_match = id_match;
         this.board = board;
         this.winner = winner;
         this.status = status;
+        this.type = turn;
     }
 
     public GameXORes(int id_match, int[][] board, int winner, GameXOPlayer player1, GameXOPlayer player2,int status){
@@ -54,6 +56,12 @@ public class GameXORes {
     public GameXORes(int status) {
         this.status=status;
     }
+
+    public GameXORes(int type,int status) {
+        this.type = type;
+        this.status=status;
+    }
+
 
     public int getWinner() {
         return this.winner;

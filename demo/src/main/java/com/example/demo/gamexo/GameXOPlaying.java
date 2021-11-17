@@ -70,8 +70,8 @@ public class GameXOPlaying {
         return this.number_user_play_again;
      }
     
-    public void setNumber_user_play_again() {
-        this.number_user_play_again++;
+    public void setNumber_user_play_again(int n) {
+        this.number_user_play_again += n;
      }
 
     private boolean checkWinner(int[][] board, int size, int n, int type) {
@@ -159,6 +159,19 @@ public class GameXOPlaying {
         }
     }
 
+    public void randomPlay(int type){
+        int[][] board = game.getBoard();
+        int size = game.getSize_board();
+        int  i = 0, j = 0;
+        for (i = 0; i < size; ++i) {
+            for (j = 0; j < size; ++j) {
+                if(board[i][j]==0){
+                    game.setBoard(i, j, type);
+                    return;
+                }
+            }
+        }
+    }
     @Override
     public String toString() {
         return game.toString() + "\nturn:" + this.turn;
