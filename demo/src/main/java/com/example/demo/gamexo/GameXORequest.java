@@ -21,6 +21,6 @@ public class GameXORequest {
     @Override 
     public String toString(){
         return "id_user:"+id_user+"\nid_match:"+id_match+"\nX:"+coordinateX+"\nY:"+coordinateY+"\ntype:"+type
-        +"\nmessage:"+this.message;
+        +"\nmessage:"+this.message+"\nstatus: "+ this.status;
     }
 }

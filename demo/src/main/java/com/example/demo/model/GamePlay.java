@@ -1,7 +1,6 @@
 package com.example.demo.model;
 
 import java.sql.Date;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -43,10 +42,10 @@ public class GamePlay {
     public void setPlayer(int id_user){ this.player = this.player+"|"+String.format("%d", id_user);}
     public void setStatus(int status){ this.status=status;}
     public GamePlay() {}
-    public GamePlay(int id_game,int id_user1){
+    public GamePlay(int id_game,int id_user1,int status){
         this.id_game=id_game;
         this.player=String.format("%d", id_user1);
-        this.status=id_user1;
+        this.status=status;
         this.user_num=1;
     }
 

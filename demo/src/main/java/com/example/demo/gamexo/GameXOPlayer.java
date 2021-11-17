@@ -27,6 +27,11 @@ public class GameXOPlayer {
     public long getGold(){return this.gold;}
     public String getName(){return this.name;}
     public String getNick_name(){return this.nick_name;}
-    public void setExp(long m){this.exp+=m*50;}
-    public void setGold(long m){this.gold+=gold*50;}
+    public void setExp(long m){this.exp+= m*50;}
+    public void setGold(long m){this.gold+= m*50;}
+
+    @Override
+    public String toString(){
+        return this.name+" "+this.exp;
+    } 
 }

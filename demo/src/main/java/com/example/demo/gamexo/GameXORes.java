@@ -21,20 +21,23 @@ public class GameXORes {
         this.id_match = gameXOPlaying.getIdmatch();
         this.player1 = gameXOPlaying.getPlayer1();
         this.player2 = gameXOPlaying.getPlayer2();
+        this.status =gameXOPlaying.getStatus();
     }
 
-    public GameXORes(int id_match, int[][] board, int winner) {
+    public GameXORes(int id_match, int[][] board, int winner,int status) {
         this.id_match = id_match;
         this.board = board;
         this.winner = winner;
+        this.status = status;
     }
 
-    public GameXORes(int id_match, int[][] board, int winner, GameXOPlayer player1, GameXOPlayer player2){
+    public GameXORes(int id_match, int[][] board, int winner, GameXOPlayer player1, GameXOPlayer player2,int status){
         this.id_match = id_match;
         this.board = board;
         this.winner = winner;
         this.player1=player1;
         this.player2=player2;
+        this.status=status;
     }
 
     public GameXORes(GameXOPlayer player1,int status) {
@@ -42,9 +45,10 @@ public class GameXORes {
         this.status=status;
     }
 
-    public GameXORes(GameXOPlayer player,String message) {
+    public GameXORes(GameXOPlayer player,String message,int status) {
         this.player1=player;
         this.message=message;
+        this.status = status;
     }
 
     public GameXORes(int status) {

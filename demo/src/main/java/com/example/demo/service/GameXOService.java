@@ -24,6 +24,9 @@ public class GameXOService {
     @Autowired
     private UserRepository userRepository;
 
+    private final int START = 1;
+    private final int WAIT = -1;
+
     private Map<Integer, GameXOPlaying> playing = new HashMap<>();
 
     private GamePlay getMatch() {
@@ -31,24 +34,24 @@ public class GameXOService {
     }
 
     public int creatGame(int id_user1) {
-        gamePlayReposity.save(new GamePlay(gameXO.getId(), id_user1));
-        return gamePlayReposity.getOneMatch(id_user1).getId();
+        GamePlay gamePlay= gamePlayReposity.save(new GamePlay(gameXO.getId(), id_user1,WAIT));
+        return gamePlay.getId();
     }
 
     public GameXORes connectGame(GameXORequest gameXORequest) {
         GamePlay macth = getMatch();
         final int id_user = gameXORequest.getId_user();
         if (macth == null) {
-            return new GameXORes(creatGame(gameXORequest.getId_user()), 1, 0);
+            return new GameXORes(creatGame(gameXORequest.getId_user()), 1, WAIT);
         }
         final int id_match = macth.getId();
-        User user1=userRepository.findById(macth.getStatus());
+        User user1=userRepository.findById(Integer.parseInt(macth.getPlayer()));
         User user2=userRepository.findById(id_user);
 
-        playing.put(id_match, new GameXOPlaying(id_match, user1, user2,-1));
+        playing.put(id_match, new GameXOPlaying(id_match, user1, user2,START));
         macth.setPlayer(id_user);
-        gamePlayReposity.updatePlayGame(id_match, macth.getPlayer(), -1, 2);
-        return new GameXORes(id_match,2,1);
+        gamePlayReposity.updatePlayGame(id_match, macth.getPlayer(), START,gameXO.getUser_num());
+        return new GameXORes(id_match,2,START);
     }
 
     public GameXOPlaying matchPlaying(int id_match) {
