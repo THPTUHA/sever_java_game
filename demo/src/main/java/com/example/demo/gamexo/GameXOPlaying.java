@@ -10,6 +10,7 @@ public class GameXOPlaying {
     private GameXOPlayer player2;
     private int turn = 1;
     private int status = 0;
+    private int number_user_play_again=0;
 
     public GameXOPlaying(int id_match, User user1, User user2, int status) {
         this.game = new GameXO();
@@ -64,6 +65,14 @@ public class GameXOPlaying {
     public int getStatus() {
        return this.status;
     }
+
+    public int getNumber_user_play_again() {
+        return this.number_user_play_again;
+     }
+    
+    public void setNumber_user_play_again() {
+        this.number_user_play_again++;
+     }
 
     private boolean checkWinner(int[][] board, int size, int n, int type) {
         int cnt = 0, i = 0, j = 0;
@@ -138,6 +147,16 @@ public class GameXOPlaying {
         if (checkDraw(board, size))
             return -1;
         return 0;
+    }
+
+    public void undateAfterGame(int winner){
+        if(winner==1){
+            player1.setExp(1);player1.setGold(1);
+            player2.setExp(-1);player2.setGold(-1);
+        }else if(winner==2){
+            player1.setExp(-1);player1.setGold(-1);
+            player2.setExp(1);player2.setGold(1);
+        }
     }
 
     @Override

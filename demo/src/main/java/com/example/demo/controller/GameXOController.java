@@ -5,6 +5,7 @@ import com.example.demo.gamexo.GameXOPlaying;
 import com.example.demo.gamexo.GameXORequest;
 import com.example.demo.gamexo.GameXORes;
 import com.example.demo.repository.GamePlayReposity;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.service.GameXOService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,8 @@ public class GameXOController {
   private GameXOService gameXOService;
   @Autowired
   private GamePlayReposity gamePlayReposity;
+  @Autowired
+  private UserRepository userRepository;
 
   @PostMapping("/start")
   public GameXORes startGame(@RequestBody GameXORequest gameXORequest) {
@@ -64,9 +67,15 @@ public class GameXOController {
       return;
     }
 
-    // khi 1 đổi thủ sẵn sàng trận mới
+    // khi user sẵn sàng trận mới
     if (gameXORequest.getStatus() == 3) {
-      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new GameXORes(3));
+      gameXOPlaying.setNumber_user_play_again();
+      if(gameXOPlaying.getNumber_user_play_again()==1){
+        GameXOPlayer player = gameXOPlaying.getPlayer(gameXORequest.getType());
+       simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new GameXORes(player, gameXORequest.getStatus()));
+      }else{
+        
+      }
       return;
     }
 
@@ -78,13 +87,6 @@ public class GameXOController {
 
     }
 
-    // cả 2 người chơi sãn sàng cho trận mới
-    if (gameXORequest.getStatus() == 5) {
-      gameXOPlaying.setBoard();
-      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new GameXORes(gameXOPlaying));
-      return;
-
-    }
 
     // khi người chơi hủy trận sau khi đối thủ hủy trận
     if (gameXORequest.getStatus() == 6) {
@@ -97,6 +99,16 @@ public class GameXOController {
       gameXOPlaying.play(gameXORequest.getCoordinateX(), gameXORequest.getCoordinateY());
       gameXOPlaying.setTurn();
       int winner = gameXOPlaying.winner();
+      if(winner!=0){
+        gameXOPlaying.undateAfterGame(winner);
+        GameXOPlayer player1=gameXOPlaying.getPlayer1();
+        GameXOPlayer player2=gameXOPlaying.getPlayer2();
+        userRepository.updateGoldExp(player1.getGold(), player1.getExp(),player1.getId());
+        userRepository.updateGoldExp(player2.getGold(), player2.getExp(),player2.getId());
+        simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match,
+          new GameXORes(id_match, gameXOPlaying.getBoard(), winner,player1, player2));
+        return;
+      }
       simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match,
           new GameXORes(id_match, gameXOPlaying.getBoard(), winner));
       return;

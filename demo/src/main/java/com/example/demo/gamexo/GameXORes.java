@@ -29,6 +29,14 @@ public class GameXORes {
         this.winner = winner;
     }
 
+    public GameXORes(int id_match, int[][] board, int winner, GameXOPlayer player1, GameXOPlayer player2){
+        this.id_match = id_match;
+        this.board = board;
+        this.winner = winner;
+        this.player1=player1;
+        this.player2=player2;
+    }
+
     public GameXORes(GameXOPlayer player1,int status) {
         this.player1=player1;
         this.status=status;
