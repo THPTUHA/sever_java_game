@@ -72,7 +72,7 @@ public class GameXOController {
         return;
       }
       gameXOPlaying.setNumber_user_play_again(-2);
-      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new GameXORes(1,PLAY));
+      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new GameXORes(gameXOPlaying.getTurn(),PLAY));
       return;
     }
     // khi 1 player huỷ trận

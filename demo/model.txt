@@ -15,7 +15,8 @@ create table user(
     locked boolean,
     enabled boolean,
     exp long,
-    gold long
+    gold long,
+    status int
 );
 
 
