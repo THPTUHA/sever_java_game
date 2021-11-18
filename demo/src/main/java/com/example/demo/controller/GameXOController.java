@@ -38,6 +38,12 @@ public class GameXOController {
 
   @PostMapping("/start")
   public GameXORes startGame(@RequestBody GameXORequest gameXORequest) {
+    if(gameXORequest.getLoading()){
+      GameXOPlaying gameXOPlaying =gameXOService.matchPlaying(gameXORequest.getId_match());
+     
+      return new GameXORes(gameXOPlaying,true,gameXORequest.getId_user());
+    }
+    System.out.println("FUCCCCCCK");
     return gameXOService.connectGame(gameXORequest);
   }
 
@@ -59,7 +65,7 @@ public class GameXOController {
     }
 
     if (status == START) {
-      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new GameXORes(gameXOPlaying));
+      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new GameXORes(gameXOPlaying,false));
       return;
     }
 
@@ -80,6 +86,8 @@ public class GameXOController {
       if(gameXOPlaying.getStatus()== PLAY){
         gameXOPlaying.setStatus(CANCEL);
         gamePlayReposity.finishPlayGame(id_match, CANCEL);
+        userRepository.updateStatus(0, gameXOPlaying.getPlayer1().getId());
+        userRepository.updateStatus(0, gameXOPlaying.getPlayer2().getId());
       }else{
          gameXOService.deletePlaying(id_match);
       }
@@ -109,7 +117,6 @@ public class GameXOController {
       if(!gameXORequest.getRandom())
         gameXOPlaying.play(gameXORequest.getCoordinateX(), gameXORequest.getCoordinateY());
       else {
-        System.out.printf("RAndom");
         gameXOPlaying.randomPlay(gameXORequest.getType());
       }
       gameXOPlaying.setTurn();

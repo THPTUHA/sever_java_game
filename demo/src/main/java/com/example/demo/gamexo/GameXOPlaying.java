@@ -74,6 +74,11 @@ public class GameXOPlaying {
         this.number_user_play_again += n;
      }
 
+    public GameXOPlayer getPlayerById(int id){
+        if(this.player1.getId()==id)return this.player1;
+        if(this.player2.getId()==id)return this.player2;
+        return null;
+    }
     private boolean checkWinner(int[][] board, int size, int n, int type) {
         int cnt = 0, i = 0, j = 0;
         for (i = 0; i < size; ++i) {

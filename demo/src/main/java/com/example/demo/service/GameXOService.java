@@ -47,7 +47,8 @@ public class GameXOService {
         final int id_match = macth.getId();
         User user1=userRepository.findById(Integer.parseInt(macth.getPlayer()));
         User user2=userRepository.findById(id_user);
-
+        user1.setStatus(id_match); userRepository.save(user1);
+        user2.setStatus(id_match); userRepository.save(user2);
         playing.put(id_match, new GameXOPlaying(id_match, user1, user2,START));
         macth.setPlayer(id_user);
         gamePlayReposity.updatePlayGame(id_match, macth.getPlayer(), START,gameXO.getUser_num());

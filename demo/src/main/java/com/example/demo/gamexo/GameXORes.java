@@ -10,19 +10,32 @@ public class GameXORes {
     private GameXOPlayer player2;
     private String user_name;
     private String message;
-    
+    private boolean loading;
+
     public GameXORes(int id_match, int type, int status) {
         this.id_match = id_match;
         this.type = type;
         this.status = status;
     }
 
-    public GameXORes(GameXOPlaying gameXOPlaying) {
+    public GameXORes(GameXOPlaying gameXOPlaying,boolean loading) {
         this.id_match = gameXOPlaying.getIdmatch();
         this.player1 = gameXOPlaying.getPlayer1();
         this.player2 = gameXOPlaying.getPlayer2();
         this.board = gameXOPlaying.getBoard();
         this.status =gameXOPlaying.getStatus();
+        this.loading = loading;
+    }
+
+    public GameXORes(GameXOPlaying gameXOPlaying,boolean loading,int id) {
+        this.id_match = gameXOPlaying.getIdmatch();
+        this.player1 = gameXOPlaying.getPlayer1();
+        this.player2 = gameXOPlaying.getPlayer2();
+        this.board = gameXOPlaying.getBoard();
+        this.status =gameXOPlaying.getStatus();
+        this.loading = loading;
+        this.type = gameXOPlaying.getPlayerById(id).getType();
+        System.out.println("type game:"+this.type);
     }
 
     public GameXORes(int id_match, int[][] board,int turn, int winner,int status) {
@@ -97,5 +110,9 @@ public class GameXORes {
 
     public String getMessage() {
         return this.message;
+    }
+
+    public boolean getLoading() {
+        return this.loading;
     }
 }
