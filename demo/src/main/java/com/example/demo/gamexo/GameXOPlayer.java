@@ -10,10 +10,10 @@ public class GameXOPlayer {
     private long gold;
     private String name;
     private String nick_name;
-    
+    private int status;
+
     public GameXOPlayer(){}
     public GameXOPlayer(User user,int type){
-       
         this.id=user.getId();
         this.type=type;
         this.name =user.getFirst_name()+" "+user.getLast_name();
@@ -29,7 +29,8 @@ public class GameXOPlayer {
     public String getNick_name(){return this.nick_name;}
     public void setExp(long m){this.exp+= m*50;}
     public void setGold(long m){this.gold+= m*50;}
-
+    public int getStatus(){return this.status;}
+    public void setStatus(int status){this.status=status;}
     @Override
     public String toString(){
         return this.name+" "+this.exp;

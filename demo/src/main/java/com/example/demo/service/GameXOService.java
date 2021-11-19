@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.example.demo.gamexo.GameXOPlaying;
 import com.example.demo.gamexo.GameXORequest;
-import com.example.demo.gamexo.GameXORes;
+import com.example.demo.gamexo.InfoGame;
 import com.example.demo.model.GamePlay;
 import com.example.demo.model.GameXO;
 import com.example.demo.model.User;
@@ -38,11 +38,11 @@ public class GameXOService {
         return gamePlay.getId();
     }
 
-    public GameXORes connectGame(GameXORequest gameXORequest) {
+    public InfoGame connectGame(GameXORequest gameXORequest) {
         GamePlay macth = getMatch();
         final int id_user = gameXORequest.getId_user();
         if (macth == null) {
-            return new GameXORes(creatGame(gameXORequest.getId_user()), 1, WAIT);
+            return new InfoGame(creatGame(id_user), 1, 1, WAIT);
         }
         final int id_match = macth.getId();
         User user1=userRepository.findById(Integer.parseInt(macth.getPlayer()));
@@ -52,7 +52,7 @@ public class GameXOService {
         playing.put(id_match, new GameXOPlaying(id_match, user1, user2,START));
         macth.setPlayer(id_user);
         gamePlayReposity.updatePlayGame(id_match, macth.getPlayer(), START,gameXO.getUser_num());
-        return new GameXORes(id_match,2,START);
+        return new InfoGame(id_match, 0, 2, START);
     }
 
     public GameXOPlaying matchPlaying(int id_match) {
@@ -62,11 +62,7 @@ public class GameXOService {
     public void deletePlaying(int id_match) {
         playing.remove(id_match);
     }
-    // public void printWait(){
-    // for(GameXOPlaying g:wait){
-    // System.out.println(g);
-    // }
-    // }
+   
     public void printPlaying() {
         for (Map.Entry<Integer, GameXOPlaying> g : playing.entrySet()) {
             System.out.println(g);

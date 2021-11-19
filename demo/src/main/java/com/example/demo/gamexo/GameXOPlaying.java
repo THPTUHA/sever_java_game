@@ -4,19 +4,20 @@ import com.example.demo.model.GameXO;
 import com.example.demo.model.User;
 
 public class GameXOPlaying {
+    private final int WINNER = 9;
+    private final int DRAW = 10;
     private GameXO game;
     private int id_match;
     private GameXOPlayer player1;
     private GameXOPlayer player2;
     private int turn = 1;
     private int status = 0;
-    private int number_user_play_again=0;
 
     public GameXOPlaying(int id_match, User user1, User user2, int status) {
         this.game = new GameXO();
         this.id_match = id_match;
-        this.player1 = new GameXOPlayer(user1, 1);
-        this.player2 = new GameXOPlayer(user2, 2);
+        this.player1 = new GameXOPlayer(user1, 1 );
+        this.player2 = new GameXOPlayer(user2, 2 );
         this.status = status;
     }
 
@@ -24,7 +25,7 @@ public class GameXOPlaying {
         return this.id_match;
     }
 
-    public GameXOPlayer getPlayer(int type) {
+    public GameXOPlayer getPlayerByType(int type) {
         if (type == 1)
             return this.player1;
         return this.player2;
@@ -66,19 +67,31 @@ public class GameXOPlaying {
        return this.status;
     }
 
-    public int getNumber_user_play_again() {
-        return this.number_user_play_again;
-     }
-    
-    public void setNumber_user_play_again(int n) {
-        this.number_user_play_again += n;
-     }
+    public void startPlay(int play){
+        this.status = play;
+        this.player1.setStatus(play);
+        this.player2.setStatus(play);
+    }
 
+    public void  playAgain(int play){
+        this.status = play;
+        this.player1.setStatus(play);
+        this.player2.setStatus(play);
+    }
     public GameXOPlayer getPlayerById(int id){
         if(this.player1.getId()==id)return this.player1;
         if(this.player2.getId()==id)return this.player2;
         return null;
     }
+
+    public boolean isGameXOReady(int ready){
+        return this.player1.getStatus()==ready && this.player2.getStatus()==ready;
+    }
+
+    public boolean isGameXOPlayAgain(int play){
+        return this.player1.getStatus()==play && this.player2.getStatus()==play;
+    }
+
     private boolean checkWinner(int[][] board, int size, int n, int type) {
         int cnt = 0, i = 0, j = 0;
         for (i = 0; i < size; ++i) {
@@ -146,11 +159,21 @@ public class GameXOPlaying {
         int size = game.getSize_board();
         int n = game.getCondition_win();
         if (checkWinner(board, size, n, 1))
-            return 1;
+            {
+                this.player1.setStatus(WINNER);
+                return 1;
+            }
         if (checkWinner(board, size, n, 2))
-            return 2;
+            {
+                this.player2.setStatus(WINNER);
+                return 2;
+            }
         if (checkDraw(board, size))
-            return -1;
+            {
+                this.player1.setStatus(DRAW);
+                this.player2.setStatus(DRAW);
+                return -1;
+            }
         return 0;
     }
 
@@ -164,14 +187,14 @@ public class GameXOPlaying {
         }
     }
 
-    public void randomPlay(int type){
+    public void randomPlay(){
         int[][] board = game.getBoard();
         int size = game.getSize_board();
         int  i = 0, j = 0;
         for (i = 0; i < size; ++i) {
             for (j = 0; j < size; ++j) {
                 if(board[i][j]==0){
-                    game.setBoard(i, j, type);
+                    game.setBoard(i, j, this.turn);
                     return;
                 }
             }

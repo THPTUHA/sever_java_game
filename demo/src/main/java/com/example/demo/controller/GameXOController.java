@@ -1,9 +1,13 @@
 package com.example.demo.controller;
 
+import com.example.demo.gamexo.GameXOMessage;
 import com.example.demo.gamexo.GameXOPlayer;
 import com.example.demo.gamexo.GameXOPlaying;
 import com.example.demo.gamexo.GameXORequest;
 import com.example.demo.gamexo.GameXORes;
+import com.example.demo.gamexo.InfoGame;
+import com.example.demo.gamexo.Play;
+import com.example.demo.gamexo.ReponsePlayer;
 import com.example.demo.repository.GamePlayReposity;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.GameXOService;
@@ -35,21 +39,23 @@ public class GameXOController {
   private final int MESSAGE = 5;
   private final int READY = 6;
   private final int END_GAME = 7;
+  private final int RELOAD = 8;
 
   @PostMapping("/start")
-  public GameXORes startGame(@RequestBody GameXORequest gameXORequest) {
-    if(gameXORequest.getLoading()){
-      GameXOPlaying gameXOPlaying =gameXOService.matchPlaying(gameXORequest.getId_match());
-     
-      return new GameXORes(gameXOPlaying,true,gameXORequest.getId_user());
-    }
+  public InfoGame startGame(@RequestBody GameXORequest gameXORequest) {
     System.out.println("FUCCCCCCK");
     return gameXOService.connectGame(gameXORequest);
   }
 
+  @PostMapping("/reload")
+  public GameXORes loadGame(@RequestBody GameXORequest gameXORequest) {
+    System.out.println(gameXORequest);
+    GameXOPlaying gameXOPlaying =gameXOService.matchPlaying(gameXORequest.getId_match());
+    return new GameXORes(gameXOPlaying,gameXORequest.getId_user(),RELOAD);
+  }
+
   @MessageMapping("/xo/1/**")
   public  void playing(GameXORequest gameXORequest) throws Exception {
-    System.out.println(gameXORequest);
     int id_match = gameXORequest.getId_match();
     int status = gameXORequest.getStatus();
     GameXOPlaying gameXOPlaying = gameXOService.matchPlaying(id_match);
@@ -57,67 +63,39 @@ public class GameXOController {
     if (gameXOPlaying == null)
       return;
 
-    if(status == MESSAGE){
-      System.out.println("Messs");
-      GameXOPlayer player = gameXOPlaying.getPlayer(gameXORequest.getType());
-      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new GameXORes(player,gameXORequest.getMessage(),MESSAGE));
-      return ;
-    }
-
     if (status == START) {
-      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new GameXORes(gameXOPlaying,false));
+      gameXOPlaying.startPlay(START);
+      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new GameXORes(gameXOPlaying));
       return;
     }
 
     if(status == READY){
-      GameXOPlayer player = gameXOPlaying.getPlayer(gameXORequest.getType());
-      gameXOPlaying.setNumber_user_play_again(1);
-      if(gameXOPlaying.getNumber_user_play_again()==1){
-        gameXOPlaying.setStatus(PLAY);
-        simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new GameXORes(player,status));
+      GameXOPlayer player = gameXOPlaying.getPlayerByType(gameXORequest.getType());
+      player.setStatus(READY);
+      gameXOPlaying.setStatus(READY);
+      if(!gameXOPlaying.isGameXOReady(READY)){
+        System.out.println(gameXOPlaying);
+        simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new ReponsePlayer(gameXOPlaying));
         return;
       }
-      gameXOPlaying.setNumber_user_play_again(-2);
-      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new GameXORes(gameXOPlaying.getTurn(),PLAY));
-      return;
-    }
-    // khi 1 player huỷ trận
-    if (status == CANCEL) {
-      if(gameXOPlaying.getStatus()== PLAY){
-        gameXOPlaying.setStatus(CANCEL);
-        gamePlayReposity.finishPlayGame(id_match, CANCEL);
-        userRepository.updateStatus(0, gameXOPlaying.getPlayer1().getId());
-        userRepository.updateStatus(0, gameXOPlaying.getPlayer2().getId());
-      }else{
-         gameXOService.deletePlaying(id_match);
-      }
-      GameXOPlayer player = gameXOPlaying.getPlayer(gameXORequest.getType());
-      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new GameXORes(player, status));
+      gameXOPlaying.startPlay(PLAY);
+      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new GameXORes(gameXOPlaying));
       return;
     }
 
-    // khi user sẵn sàng trận mới
-    if (status == PLAY_AGAIN) {
-      gameXOPlaying.setNumber_user_play_again(1);
-      if(gameXOPlaying.getNumber_user_play_again()==1){
-        GameXOPlayer player = gameXOPlaying.getPlayer(gameXORequest.getType());
-       simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new GameXORes(player, status));
-      }else{
-        gameXOPlaying.setBoard();
-        gameXOPlaying.setNumber_user_play_again(-2);
-        simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new GameXORes(
-          id_match,new int[3][3],0,gameXOPlaying.getPlayer1(),gameXOPlaying.getPlayer2(),START
-        ));
-      }
-      return;
+    if(status == MESSAGE){
+      System.out.println("Messs");
+      GameXOPlayer player = gameXOPlaying.getPlayerByType(gameXORequest.getType());
+      gameXOPlaying.setStatus(MESSAGE);
+      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new GameXOMessage(player, gameXORequest.getMessage(), MESSAGE));
+      return ;
     }
-
 
     if (status== PLAY&& gameXORequest.getType() == gameXOPlaying.getTurn()) {
       if(!gameXORequest.getRandom())
         gameXOPlaying.play(gameXORequest.getCoordinateX(), gameXORequest.getCoordinateY());
       else {
-        gameXOPlaying.randomPlay(gameXORequest.getType());
+        gameXOPlaying.randomPlay();
       }
       gameXOPlaying.setTurn();
       int winner = gameXOPlaying.winner();
@@ -127,14 +105,41 @@ public class GameXOController {
         GameXOPlayer player2=gameXOPlaying.getPlayer2();
         userRepository.updateGoldExp(player1.getGold(), player1.getExp(),player1.getId());
         userRepository.updateGoldExp(player2.getGold(), player2.getExp(),player2.getId());
-        simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match,
-          new GameXORes(id_match, gameXOPlaying.getBoard(), winner,player1, player2,END_GAME));
-        return;
+        gameXOPlaying.playAgain(END_GAME);
       }
-      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match,
-          new GameXORes(id_match, gameXOPlaying.getBoard(),gameXOPlaying.getTurn(), winner,PLAY));
+      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match,new Play(gameXOPlaying));
       return;
 
+    }
+
+     // khi 1 player huỷ trận
+     if (status == CANCEL) {
+      gameXOPlaying.getPlayerByType(gameXORequest.getType()).setStatus(CANCEL);
+      if(gameXOPlaying.getStatus()!= CANCEL){
+        gameXOPlaying.setStatus(CANCEL);
+        gamePlayReposity.finishPlayGame(id_match, CANCEL);
+        userRepository.updateStatus(0, gameXOPlaying.getPlayer1().getId());
+        userRepository.updateStatus(0, gameXOPlaying.getPlayer2().getId());
+      }else{
+         gameXOService.deletePlaying(id_match);
+      }
+      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new ReponsePlayer(gameXOPlaying));
+      return;
+    }
+
+    // khi user sẵn sàng trận mới
+    if (status == PLAY_AGAIN) {
+      GameXOPlayer player = gameXOPlaying.getPlayerByType(gameXORequest.getType());
+      player.setStatus(PLAY_AGAIN);
+      if(!gameXOPlaying.isGameXOPlayAgain(PLAY_AGAIN)){
+        gameXOPlaying.setStatus(PLAY_AGAIN);
+        simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new ReponsePlayer(gameXOPlaying));
+        return;
+      }
+        gameXOPlaying.setBoard();
+        gameXOPlaying.playAgain(START);
+        simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new GameXORes(gameXOPlaying));
+      return;
     }
 
   }

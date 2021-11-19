@@ -10,7 +10,6 @@ public class GameXORequest {
     private String user_name;
     private String message="";
     private boolean random;
-    private boolean loading;
 
     public int getId_match(){return this.id_match;}
     public int getType(){return this.type;}
@@ -21,10 +20,9 @@ public class GameXORequest {
     public String getUser_name(){return this.user_name;}
     public String getMessage(){return this.message;}
     public boolean getRandom(){return this.random;}
-    public boolean getLoading(){return this.loading;}
     @Override 
     public String toString(){
         return "id_user:"+id_user+"\nid_match:"+id_match+"\nX:"+coordinateX+"\nY:"+coordinateY+"\ntype:"+type
-        +"\nmessage:"+this.message+"\nstatus: "+ this.status+"\nrandom:"+this.random+"\nloading:"+this.loading;
+        +"\nmessage:"+this.message+"\nstatus: "+ this.status+"\nrandom:"+this.random;
     }
 }
