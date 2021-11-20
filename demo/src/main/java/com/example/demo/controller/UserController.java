@@ -3,15 +3,21 @@ package com.example.demo.controller;
 import com.example.demo.model.User;
 import com.example.demo.repository.GamePlayReposity;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.service.CloudinaryService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-
+@RequestMapping("/user")
 public class UserController {
     @Autowired
     UserRepository userRepository;
@@ -19,6 +25,8 @@ public class UserController {
     GamePlayReposity gamePlayReposity;
     @Autowired
     AuthenticationManager authenticationManager;
+    @Autowired
+    CloudinaryService cloudinaryService;
     
     @GetMapping("/home")
     public String home(){
@@ -29,14 +37,9 @@ public class UserController {
     public String hello(){
         return "Hello";
     }
-    @GetMapping("/admin")
-    public String admin(){
-        return "Admin";
-    }
-    @GetMapping("/user")
-    public User user(@RequestParam String email){
-        System.out.println(email);
-        User data_user = userRepository.findByEmail(email);
+    @GetMapping("")
+    public User user(@RequestAttribute int id){
+        User data_user = userRepository.findById(id);
         return data_user;
     }
     @GetMapping("/403")
@@ -44,14 +47,11 @@ public class UserController {
         return "403";
     }
     
-    // @PostMapping("/play_public")
-    // public String test(@RequestBody GamePlay gamePlay){
-    //     // System.out.println(gamePlay);
-    //     if(gamePlayReposity.getOneGamePlay()!=null)
-    //    {
-    //     GamePlay gamePlay2=gamePlayReposity.getOneGamePlay() ;
-    //     System.out.println(gamePlay2);
-    //    }
-    //     return "ok";
-    // }
+    @PostMapping("/update_avatar")
+    public String update(@RequestParam("new_avatar")MultipartFile avatar ,@RequestAttribute int id ) {
+        String link = cloudinaryService.uploadImage(avatar);
+        userRepository.updateAvatar(link, id);
+        return link;
+    }
+    
 }

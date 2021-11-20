@@ -1,16 +1,13 @@
 package com.example.demo;
 
-import com.example.demo.model.User;
-import com.example.demo.repository.UserRepository;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.io.IOException;
+
+import com.cloudinary.*;
+import com.cloudinary.utils.ObjectUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,8 +16,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class DemoApplication  {
 
-	public static void main(String[] args) {
-		ApplicationContext ctx= SpringApplication.run(DemoApplication.class, args);
+	public static void main(String[] args) throws IOException {
 		// UserRespository userRespository=context.getBean(UserRespository.class);
 		// for(User a:users)System.out.println(a);
 		// userRespository.delete(new User(14,"Linh"));
@@ -33,6 +29,17 @@ public class DemoApplication  {
         // for (String beanName : beanNames) {
         //     System.out.println(beanName);
         // }
+		Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
+			"cloud_name", "nghiawebgamejava",
+			"api_key", "175186513787978", 
+			"api_secret", "syF76RQKDzTyopD22292VwMPgKk")); 
+			SingletonManager manager = new SingletonManager();
+			manager.setCloudinary(cloudinary);
+			manager.init();
+		// File  file = new File("C:\\Users\\Dell\\Downloads\\album\\a.jpg");
+		// Map upload = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
+		// System.out.println(upload.get("url"));
+	ApplicationContext ctx= SpringApplication.run(DemoApplication.class, args);
 	}
 	// @Autowired
     // UserRepository userRepository;

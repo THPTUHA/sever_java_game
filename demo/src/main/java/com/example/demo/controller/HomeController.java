@@ -43,7 +43,6 @@ public class HomeController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = tokenProvider.generateToken((CustomUserDetails) authentication.getPrincipal());
-        System.out.println(jwt);
         userRepository.updateLastLogin(new Date(), loginRequest.getEmail());
         return new LoginResponse(jwt);
     }

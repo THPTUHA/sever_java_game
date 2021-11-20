@@ -30,6 +30,8 @@ public class User implements Serializable{
     private String password;
     @Column(name="role")
     private String role = "ROLE_USER";
+    @Column(name="avatar")
+    private String avatar;
     @Column(name="address")
     private String address;
     @Column(name="phone")
@@ -66,6 +68,7 @@ public class User implements Serializable{
     public String getEmail(){return this.email;}
     public String getPassword(){return this.password;}
     public String getRole(){return this.role;}
+    public String getAvatar(){return this.avatar;}
     public boolean getExpired(){return this.expired;}
     public int getSex(){return this.sex;}
     public boolean getLocked(){return this.locked;}

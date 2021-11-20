@@ -6,6 +6,7 @@ create table user(
     password char(255),
     role text,
     address char(255),
+    avatar text,
     phone char(255),
     discription text,
     sex int,
@@ -19,6 +20,20 @@ create table user(
     status int
 );
 
+create table news(
+	id int auto_increment key,
+    title text,
+    describes text,
+    content text,
+    user_id int,
+    last_update datetime,
+    time_create datetime,
+    status int,
+    view int,
+    like_num int,
+    comment text,
+    background_image text
+)
 
 create table play(
 	id int auto_increment key,

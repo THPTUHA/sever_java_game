@@ -94,6 +94,18 @@
 			<artifactId>validation-api</artifactId>
 			<version>2.0.1.Final</version>
 		</dependency>
+		<dependency>
+			<groupId>com.cloudinary</groupId>
+			<artifactId>cloudinary-http44</artifactId>
+			<version>1.29.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.cloudinary/cloudinary-taglib -->
+		<dependency>
+			<groupId>com.cloudinary</groupId>
+			<artifactId>cloudinary-taglib</artifactId>
+			<version>1.29.0</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
