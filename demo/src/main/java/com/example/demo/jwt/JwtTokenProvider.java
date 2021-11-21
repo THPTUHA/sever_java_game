@@ -6,6 +6,7 @@ import java.util.Date;
 import javax.servlet.http.HttpServletResponse;
 
 import com.example.demo.model.CustomUserDetails;
+import com.example.demo.model.User;
 
 import org.springframework.stereotype.Component;
 
@@ -30,6 +31,16 @@ public class JwtTokenProvider {
                    .signWith(SignatureAlgorithm.HS512, JWT_SECRET)
                    .compact();
     }
+    public String generateToken(User user) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + JWT_EXPIRATION);
+        return Jwts.builder()
+                   .setSubject(Long.toString(user.getId()))
+                   .setIssuedAt(now)
+                   .setExpiration(expiryDate)
+                   .signWith(SignatureAlgorithm.HS512, JWT_SECRET)
+                   .compact();
+    }
 
     public int getUserIdFromJWT(String token) {
         Claims claims = Jwts.parser()
@@ -48,7 +59,7 @@ public class JwtTokenProvider {
             response.setStatus(403);
         } catch (ExpiredJwtException ex) {
             System.out.println("Expired JWT token");
-            // response.setStatus(403);
+            response.setStatus(403);
         } catch (UnsupportedJwtException ex) {
             System.out.println("Unsupported JWT token");
             response.setStatus(403);

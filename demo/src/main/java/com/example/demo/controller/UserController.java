@@ -10,7 +10,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,7 +45,7 @@ public class UserController {
     public String accessDenied() {
         return "403";
     }
-    
+
     @PostMapping("/update_avatar")
     public String update(@RequestParam("new_avatar")MultipartFile avatar ,@RequestAttribute int id ) {
         String link = cloudinaryService.uploadImage(avatar);

@@ -1,13 +1,16 @@
 package com.example.demo;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 
 import java.io.IOException;
 
+
 import com.cloudinary.*;
 import com.cloudinary.utils.ObjectUtils;
+import com.example.demo.service.EmailSenderService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -15,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 @SpringBootApplication
 @RequiredArgsConstructor
 public class DemoApplication  {
-
 	public static void main(String[] args) throws IOException {
 		// UserRespository userRespository=context.getBean(UserRespository.class);
 		// for(User a:users)System.out.println(a);
@@ -41,19 +43,12 @@ public class DemoApplication  {
 		// System.out.println(upload.get("url"));
 	ApplicationContext ctx= SpringApplication.run(DemoApplication.class, args);
 	}
+
 	// @Autowired
     // UserRepository userRepository;
     // @Autowired
     // PasswordEncoder passwordEncoder;
 
-    // @Override
-    // public void run(String... args) throws Exception {
-    //     // Khi chương trình chạy
-    //     // Insert vào csdl một user.
-    //     User user = new User("minhhieu@gmail.com",passwordEncoder.encode("123"));
-    //     userRepository.save(user);
-    //     System.out.println(user);
-    // }
 	// @Bean
 	// 	public FilterRegistrationBean corsFilterRegistration() {
 	// 		FilterRegistrationBean registrationBean =
