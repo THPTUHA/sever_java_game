@@ -10,11 +10,15 @@ import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.EmailSenderService;
 import com.example.demo.service.UserService;
+import com.example.demo.model.Mail;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,7 +44,13 @@ public class HomeController {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private EmailSenderService emailSenderService;
+    @Value("${Server}")
+    String server;
+    @Value("${Client}")
+    String client;
 
+    private ArrayList<Mail>emails = new ArrayList<>();
+    
     @PostMapping("/login")
     public LoginResponse authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         System.out.println(loginRequest);
@@ -48,6 +58,8 @@ public class HomeController {
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        User user = userRepository.findByEmail(loginRequest.getEmail());
+        if(user.getRole().compareTo("ROLE_GEST")==0)return new LoginResponse();
         String jwt = tokenProvider.generateToken((CustomUserDetails) authentication.getPrincipal());
         userRepository.updateLastLogin(new Date(), loginRequest.getEmail());
         return new LoginResponse(jwt);
@@ -58,7 +70,9 @@ public class HomeController {
         System.out.println(id);
         User user = userRepository.getById(id);
         if(user==null)return "FUCK";
-        return "OK";
+        userRepository.updateRole("ROLE_USER", id);
+        String link =client+"/login";
+        return "Click here to login :"+link;
     }
     @PostMapping("/register")
     public String signUp(@RequestBody User user) {
@@ -68,8 +82,13 @@ public class HomeController {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         User new_user = userRepository.save(user);
         String jwt = tokenProvider.generateToken(new_user);
-        String link ="http://localhost:8080/verify?token="+jwt;
-        emailSenderService.sendSimpleEmail(user.getEmail(), "Click here to verify : "+link, "TEST");
-        return "Success";
+        String link =server+"/verify?token="+jwt;
+       try {
+        emailSenderService.sendSimpleEmail(user.getEmail(), "Click here to verify : "+link, "Verify");
+       } catch (Exception e) {
+           System.out.println(e);
+       }
+        return "Vào mail để xác minh";
     }
+
 }

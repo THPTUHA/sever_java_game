@@ -29,7 +29,7 @@ public class User implements Serializable{
     @Column(name="password")
     private String password;
     @Column(name="role")
-    private String role = "ROLE_USER";
+    private String role ="ROLE_GEST" ;
     @Column(name="avatar")
     private String avatar;
     @Column(name="address")
@@ -68,6 +68,7 @@ public class User implements Serializable{
     public String getEmail(){return this.email;}
     public String getPassword(){return this.password;}
     public String getRole(){return this.role;}
+    public void setRole(String role) { this.role = role;  }
     public String getAvatar(){return this.avatar;}
     public boolean getExpired(){return this.expired;}
     public int getSex(){return this.sex;}

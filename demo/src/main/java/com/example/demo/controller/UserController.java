@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import java.util.ArrayList;
+
 import com.example.demo.model.User;
 import com.example.demo.repository.GamePlayReposity;
 import com.example.demo.repository.UserRepository;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+
+
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -26,11 +30,11 @@ public class UserController {
     AuthenticationManager authenticationManager;
     @Autowired
     CloudinaryService cloudinaryService;
-    
+    ArrayList<Integer>a=new ArrayList<>();
     @GetMapping("/home")
     public String home(){
-        System.out.println("OK");
-        return "Home";
+        System.out.println("III");
+       return "Home";
     }
     @GetMapping("/hello")
     public String hello(){
@@ -43,7 +47,13 @@ public class UserController {
     }
     @GetMapping("/403")
     public String accessDenied() {
-        return "403";
+        a.add(2);
+        while(true){
+            if(a.size()>=2){
+                return "OK";
+            }
+        }
+       
     }
 
     @PostMapping("/update_avatar")
