@@ -1,6 +1,5 @@
 package com.example.demo.model;
 
-import java.io.File;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -39,8 +38,19 @@ public class News {
     private String comment;
     @Column(name="background_image")
     private String background_image;
+    @Column(name ="user_name")
+    private String user_name;
 
-    private File image;
+    public News(){};
+    public News(String title,String describes, String background_image,String content, int user_id,String user_name){
+        this.title = title;
+        this.describes =describes;
+        this.background_image = background_image;
+        this.content = content;
+        this.time_create = new Date();
+        this.user_id = user_id;
+        this.user_name = user_name;
+    }
     public int getId(){
         return this.id;
     }
@@ -77,10 +87,6 @@ public class News {
         return this.like_num;
     }
 
-    public File getImage(){
-        return this.image;
-    }
-
     public String getComment(){
         return this.comment;
     }
@@ -88,8 +94,12 @@ public class News {
     public String getBackground_image(){
         return this.background_image;
     }
+
+    public String getUser_name() {
+        return user_name;
+    }
     @Override
     public String toString() {
-        return "title: "+this.title+"\nfile:"+this.image;
+        return "title: "+this.title+"\nfile:"+this.background_image;
     }
 }

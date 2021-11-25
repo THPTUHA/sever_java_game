@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface NewsRespository extends JpaRepository<News,Integer>{
-    
+    News findById(int id);
 }

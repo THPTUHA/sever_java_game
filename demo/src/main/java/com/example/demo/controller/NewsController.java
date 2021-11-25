@@ -5,13 +5,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 import com.cloudinary.Cloudinary;
 import com.example.demo.model.News;
+import com.example.demo.model.User;
 import com.example.demo.repository.NewsRespository;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.service.CloudinaryService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
@@ -19,22 +25,44 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequestMapping("/news")
 public class NewsController {
     @Autowired
-    private NewsRespository newRespository;
+    private NewsRespository newsRespository;
     @Autowired
     private CloudinaryService cloudinaryService ;
+    @Autowired
+    private UserRepository userRepository;
 
     private final int ERR_TITLE = 1;
     private final int ERR_CONTENT = 2;
     private final int ERR_DESCRIBES = 3;
     private final int SUCCESS = 0;
+
+    @GetMapping("")
+    public List<News> allNews(){
+        List<News> list_news = newsRespository.findAll();
+        return list_news;
+    }
+
+    @PostMapping("/detail")
+    public News getNews(@RequestBody News news){
+        System.out.println("OK");
+        return newsRespository.findById(news.getId());
+    }
+
     @PostMapping("/create")
-    public int creatNews(@RequestParam("image") MultipartFile image){
-        System.out.println(cloudinaryService.uploadImage(image));
-        // if(news.getTitle() =="") return ERR_TITLE;
-        // if(news.getContent() =="") return ERR_CONTENT;
-        // if(news.getDescribes() =="") return ERR_DESCRIBES;
-        // newRespository.save(news);
-        return SUCCESS;
+    public String creatNews(@RequestParam("background_image") MultipartFile background_image,@RequestParam("title")String title,
+    @RequestParam("describes")String describes,@RequestParam("content")String content,@RequestAttribute("id")int user_id){
+        if(background_image == null) return "Thiếu background image!!";
+        if(title =="") return "Thiếu title!!";
+        if(describes=="") return "Thiếu mô tả";
+        if(content=="") return "Thiếu nội dung";
+        try {
+            User user = userRepository.findById(user_id);
+            String link = cloudinaryService.uploadImage(background_image);
+            newsRespository.save(new News(title,describes,link,content,user_id,user.getFirst_name()+" "+user.getLast_name()));
+        } catch (Exception e) {
+            return "Some thing worng!!";
+        }
+        return "SUCCESS";
     } 
     
     

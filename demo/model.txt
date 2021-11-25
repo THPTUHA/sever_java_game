@@ -32,7 +32,8 @@ create table news(
     view int,
     like_num int,
     comment text,
-    background_image text
+    background_image text,
+    user_name text,
 )
 
 create table play(
