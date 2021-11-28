@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import java.util.ArrayList;
 
-import com.example.demo.gamexo.GameXOMessage;
 import com.example.demo.gamexo.GameXOPlayer;
 import com.example.demo.gamexo.GameXOPlaying;
 import com.example.demo.gamexo.GameXORequest;
@@ -12,6 +11,7 @@ import com.example.demo.gamexo.Play;
 import com.example.demo.gamexo.ReponsePlayer;
 import com.example.demo.model.Game;
 import com.example.demo.model.GamePlay;
+import com.example.demo.model.Message;
 import com.example.demo.model.RecordMatch;
 import com.example.demo.model.User;
 import com.example.demo.repository.GamePlayReposity;
@@ -28,6 +28,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -106,7 +107,6 @@ public class GameXOController {
 
   @MessageMapping("/xo/1/**")
   public  void playing(GameXORequest gameXORequest) throws Exception {
-    System.out.println(gameXORequest);
     int match_id = gameXORequest.getMatch_id();
     int status = gameXORequest.getStatus();
     GameXOPlaying gameXOPlaying = gameXOService.matchPlaying(match_id);
@@ -138,7 +138,7 @@ public class GameXOController {
       System.out.println("Messs");
       GameXOPlayer player = gameXOPlaying.getPlayerById(gameXORequest.getUser_id());
       gameXOPlaying.setStatus(MESSAGE);
-      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + match_id, new GameXOMessage(player, gameXORequest.getMessage(), MESSAGE));
+      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + match_id, new Message(player.getId(),player.getName(),player.getAvatar(),gameXORequest.getMessage(),MESSAGE));
       return ;
     }
 

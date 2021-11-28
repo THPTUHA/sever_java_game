@@ -1,5 +1,6 @@
 package com.example.demo.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -15,7 +16,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ChatReposity extends JpaRepository<Chat,Integer>{
-    @Query(value = "SELECT * FROM chat c order by c.id desc  LIMIT 50",nativeQuery = true)
+    @Query(value = "SELECT * FROM chat c order by c.id asc  LIMIT 20",nativeQuery = true)
     List<Chat> getChat();
-   
+    @Modifying
+    @Transactional
+    @Query(value = "INSERT chat (user_id,message,send_time,status) values (:user_id,:message,:send_time,:status)",nativeQuery = true)
+    void addChat(@Param("user_id")int user_id,@Param("message")String message,@Param("send_time")Date send_time,@Param("status")int status);
 }

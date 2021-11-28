@@ -1,11 +1,12 @@
 package com.example.demo.controller;
 
-import com.example.demo.gamexo.GameXOMessage;
 import com.example.demo.model.Chat;
+import com.example.demo.model.Message;
+import com.example.demo.model.User;
 import com.example.demo.repository.ChatReposity;
+import com.example.demo.repository.UserRepository;
 
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +23,25 @@ public class ChatController {
    private SimpMessagingTemplate simpMessagingTemplate;
    @Autowired
    private ChatReposity chatReposity;
+   @Autowired
+   private UserRepository userRepository;
+   private List<Chat> chat;
+
    @GetMapping("/chat")
    public List<Chat> getStartChat(){
-     return  chatReposity.getChat();
+     chat =chatReposity.getChat();
+     return  chat;
    }
    @MessageMapping("/chat/**")
-   public void chatting(GameXOMessage chat){
-        System.out.println(chat);
-        simpMessagingTemplate.convertAndSend("/topic/chat" , chat);
+   public void chatting(Message message){
+        System.out.println(message);
+        User user = userRepository.findById(message.getUser_id());
+        if(user!=null)
+        {
+          if(chat.size()>20) chat.remove(0);
+          chat.add(new Chat(user,message.getMessage(),0));
+          simpMessagingTemplate.convertAndSend("/topic/chat" , chat);
+          chatReposity.addChat(user.getId(), message.getMessage(), new Date(), 0);
+        }
    }
 }

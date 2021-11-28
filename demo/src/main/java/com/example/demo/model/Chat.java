@@ -26,8 +26,8 @@ public class Chat {
     private User user;
     @Column(name="message")
     private String message;
-    @Column(name="time")
-    private Date time;
+    @Column(name="send_time")
+    private Date send_time;
     @Column(name="status")
     private int status;
 
@@ -39,11 +39,18 @@ public class Chat {
     public String getAvatar() {
         return user.getAvatar();
     }
+    public Date getSend_time() {
+        return send_time;
+    }
+    public int getUser_id(){
+        return this.user.getId();
+    }    
     public int getStatus(){return this.status;}
     public void setStatus(int status){ this.status=status;}
-
-    public Chat(int id, int status){
-        this.id=id;
+    public Chat(){}
+    public Chat(User user,String message, int status){
+        this.user = user;
+        this.message = message;
         this.status=status;
     }
 
