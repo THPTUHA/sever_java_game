@@ -3,12 +3,15 @@ package com.example.demo.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 
@@ -56,6 +59,8 @@ public class User implements Serializable{
     private long gold;
     @Column(name="status")
     private int status;
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    private List<GamePlay>gameplay;
 
     public User(){}
     public User(String eamil,String password){
@@ -80,6 +85,9 @@ public class User implements Serializable{
     public void setPassword(String password){this.password=password;}
     public int getStatus(){return this.status;}
     public void setStatus(int status){ this.status = status;}
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
     @Override
     public String toString(){
         return "id: "+ id + "\nfirst_name: "+ first_name+"\nlast_name:"+last_name+"\nemail: "+email

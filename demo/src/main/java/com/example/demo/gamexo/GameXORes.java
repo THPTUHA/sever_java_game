@@ -1,7 +1,7 @@
 package com.example.demo.gamexo;
 
 public class GameXORes {
-    private int id_match;
+    private int match_id;
     private int[][] board;
     private int type;
     private int status;
@@ -9,14 +9,14 @@ public class GameXORes {
     private GameXOPlayer player1;
     private GameXOPlayer player2;
     
-    public GameXORes(int id_match, int type, int status) {
-        this.id_match = id_match;
+    public GameXORes(int match_id, int type, int status) {
+        this.match_id = match_id;
         this.type = type;
         this.status = status;
     }
 
     public GameXORes(GameXOPlaying gameXOPlaying) {
-        this.id_match = gameXOPlaying.getIdmatch();
+        this.match_id = gameXOPlaying.getMatch_id();
         this.player1 = gameXOPlaying.getPlayer1();
         this.player2 = gameXOPlaying.getPlayer2();
         this.board = gameXOPlaying.getBoard();
@@ -25,7 +25,7 @@ public class GameXORes {
     }
 
     public GameXORes(GameXOPlaying gameXOPlaying, int id , int status) {
-        this.id_match = gameXOPlaying.getIdmatch();
+        this.match_id = gameXOPlaying.getMatch_id();
         this.player1 = gameXOPlaying.getPlayer1();
         this.player2 = gameXOPlaying.getPlayer2();
         this.board = gameXOPlaying.getBoard();
@@ -35,6 +35,9 @@ public class GameXORes {
         System.out.println("type game:"+this.type);
     }
 
+    public int getMatch_id() {
+        return match_id;
+    }
     public GameXORes(int status) {
         this.status=status;
     }
@@ -42,9 +45,6 @@ public class GameXORes {
     public GameXORes(int type,int status) {
         this.type = type;
         this.status=status;
-    }
-    public int getId_match() {
-        return this.id_match;
     }
 
     public int getType() {

@@ -36,4 +36,5 @@ public interface UserRepository extends JpaRepository<User,Integer>{
         void updateRole(@Param("role")String role, @Param("id")int id);
         User findByEmail(String email);
         User findById(int id);
+        void deleteById(int id);
 }

@@ -6,7 +6,9 @@ import com.example.demo.LoginRequest;
 import com.example.demo.LoginResponse;
 import com.example.demo.jwt.JwtTokenProvider;
 import com.example.demo.model.CustomUserDetails;
+import com.example.demo.model.GamePlay;
 import com.example.demo.model.User;
+import com.example.demo.repository.GamePlayReposity;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.EmailSenderService;
 import com.example.demo.service.UserService;
@@ -19,6 +21,8 @@ import java.util.LinkedList;
 import org.springframework.security.core.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@EnableScheduling
 public class HomeController {
     @Autowired
     UserService userService;
@@ -44,6 +49,8 @@ public class HomeController {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private EmailSenderService emailSenderService;
+    @Autowired
+    private GamePlayReposity gamePlayReposity;
     @Value("${Server}")
     String server;
     @Value("${Client}")
@@ -53,11 +60,11 @@ public class HomeController {
     
     @PostMapping("/login")
     public LoginResponse authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-        System.out.println(loginRequest);
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        System.out.println(loginRequest);
         User user = userRepository.findByEmail(loginRequest.getEmail());
         if(user.getRole().compareTo("ROLE_GEST")==0)return new LoginResponse();
         String jwt = tokenProvider.generateToken((CustomUserDetails) authentication.getPrincipal());
@@ -80,6 +87,7 @@ public class HomeController {
         User user_exist = userRepository.findByEmail(user.getEmail());
         if(user_exist != null)return "Email đã tồn tại";
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setAvatar("https://avatars.dicebear.com/api/micah/"+user.getFirst_name()  + user.getLast_name()+".svg");
         User new_user = userRepository.save(user);
         String jwt = tokenProvider.generateToken(new_user);
         String link =server+"/verify?token="+jwt;
@@ -90,5 +98,9 @@ public class HomeController {
        }
         return "Vào mail để xác minh";
     }
-
+    // @Scheduled(fixedDelay = 5000)
+    // public void test(){
+    //     userRepository.deleteById(34);
+    //    System.out.println("OK");
+    // }
 }

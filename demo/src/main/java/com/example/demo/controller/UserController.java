@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import com.example.demo.model.GamePlay;
 import com.example.demo.model.User;
 import com.example.demo.repository.GamePlayReposity;
 import com.example.demo.repository.UserRepository;
@@ -63,4 +65,10 @@ public class UserController {
         return link;
     }
     
+    @PostMapping("/gameplay/history")
+    public List<GamePlay> historyPlay(@RequestAttribute("id") int user_id){
+        List<GamePlay> game_play = gamePlayReposity.getHistory(user_id);
+           return game_play;
+      
+    }
 }

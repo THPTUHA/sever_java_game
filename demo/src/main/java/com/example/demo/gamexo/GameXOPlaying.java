@@ -7,24 +7,24 @@ public class GameXOPlaying {
     private final int WINNER = 9;
     private final int DRAW = 10;
     private GameXO game;
-    private int id_match;
+    private int match_id;
     private GameXOPlayer player1;
     private GameXOPlayer player2;
     private int turn = 1;
     private int status = 0;
 
-    public GameXOPlaying(int id_match, User user1, User user2, int status) {
+    public GameXOPlaying(int match_id, User user1, User user2, int status) {
         this.game = new GameXO();
-        this.id_match = id_match;
+        this.match_id = match_id;
         this.player1 = new GameXOPlayer(user1, 1 );
         this.player2 = new GameXOPlayer(user2, 2 );
         this.status = status;
     }
 
-    public int getIdmatch() {
-        return this.id_match;
+    public int getMatch_id() {
+        return match_id;
     }
-
+    
     public GameXOPlayer getPlayerByType(int type) {
         if (type == 1)
             return this.player1;
@@ -181,9 +181,11 @@ public class GameXOPlaying {
         if(winner==1){
             player1.setExp(1);player1.setGold(1);
             player2.setExp(-1);player2.setGold(-1);
+            player1.setPoint(1);
         }else if(winner==2){
             player1.setExp(-1);player1.setGold(-1);
             player2.setExp(1);player2.setGold(1);
+            player2.setPoint(1);
         }
     }
 

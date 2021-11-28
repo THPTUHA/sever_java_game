@@ -48,22 +48,6 @@ public class NewsController {
         return newsRespository.findById(news.getId());
     }
 
-    @PostMapping("/create")
-    public String creatNews(@RequestParam("background_image") MultipartFile background_image,@RequestParam("title")String title,
-    @RequestParam("describes")String describes,@RequestParam("content")String content,@RequestAttribute("id")int user_id){
-        if(background_image == null) return "Thiếu background image!!";
-        if(title =="") return "Thiếu title!!";
-        if(describes=="") return "Thiếu mô tả";
-        if(content=="") return "Thiếu nội dung";
-        try {
-            User user = userRepository.findById(user_id);
-            String link = cloudinaryService.uploadImage(background_image);
-            newsRespository.save(new News(title,describes,link,content,user_id,user.getFirst_name()+" "+user.getLast_name()));
-        } catch (Exception e) {
-            return "Some thing worng!!";
-        }
-        return "SUCCESS";
-    } 
     
     
 }

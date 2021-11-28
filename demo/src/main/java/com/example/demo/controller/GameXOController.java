@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import java.util.ArrayList;
+
 import com.example.demo.gamexo.GameXOMessage;
 import com.example.demo.gamexo.GameXOPlayer;
 import com.example.demo.gamexo.GameXOPlaying;
@@ -8,20 +10,30 @@ import com.example.demo.gamexo.GameXORes;
 import com.example.demo.gamexo.InfoGame;
 import com.example.demo.gamexo.Play;
 import com.example.demo.gamexo.ReponsePlayer;
+import com.example.demo.model.Game;
+import com.example.demo.model.GamePlay;
+import com.example.demo.model.RecordMatch;
+import com.example.demo.model.User;
 import com.example.demo.repository.GamePlayReposity;
+import com.example.demo.repository.GameReposity;
+import com.example.demo.repository.RecordMatchReposity;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.GameXOService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/xo")
+@EnableScheduling
 public class GameXOController {
   @Autowired
   private SimpMessagingTemplate simpMessagingTemplate;
@@ -31,6 +43,12 @@ public class GameXOController {
   private GamePlayReposity gamePlayReposity;
   @Autowired
   private UserRepository userRepository;
+  @Autowired
+  private RecordMatchReposity recordMatchReposity;
+  @Autowired
+  private GameReposity gameReposity;
+
+  private ArrayList<User>user_waiting = new ArrayList<>();
 
   private final int START = 1;
   private final int CANCEL = 2;
@@ -41,31 +59,64 @@ public class GameXOController {
   private final int END_GAME = 7;
   private final int RELOAD = 8;
 
+
   @PostMapping("/start")
-  public InfoGame startGame(@RequestBody GameXORequest gameXORequest) {
+  public String startGame(@RequestAttribute("id") int user_id) {
     System.out.println("FUCCCCCCK");
-    return gameXOService.connectGame(gameXORequest);
+    try {
+      user_waiting.add(userRepository.findById(user_id));
+    } catch (Exception e) {
+      return "ERR";
+    }
+    return "SUCCCESS";
   }
 
+  @Scheduled(fixedDelay = 3000)
+  public void handleMatch(){
+    Game game = gameReposity.findById(1);
+    System.out.println("RUN");
+    while(user_waiting.size()>1){
+      RecordMatch recordMatch =  recordMatchReposity.save(new RecordMatch());
+      String[] opponent =new String[2];
+      for(int i =0 ;i<2;++i){
+        User user = user_waiting.get(1-i);
+        opponent[i] ="id"+"@#$"+ user.getId()+"@#$first_name@#$"+user.getFirst_name()+"@#$last_name@#$"
+        +user.getLast_name()+"@#$avatar@#$"+user.getAvatar();
+      }
+      for(int i =0 ;i<2;++i){
+        gamePlayReposity.addRecord(game.getId(), recordMatch.getId(), user_waiting.get(i).getId(), opponent[i], 0);
+        userRepository.updateStatus(recordMatch.getId(),user_waiting.get(i).getId());
+      }
+      GameXOPlaying gameXOPlaying = new GameXOPlaying(recordMatch.getId(), user_waiting.get(0), user_waiting.get(1), START);
+      gameXOService.addMatch(gameXOPlaying);
+      for(int i =0 ;i<2;++i){
+        simpMessagingTemplate.convertAndSend("/topic/xo/wating/" + user_waiting.get(i).getId(), new GameXORes(gameXOPlaying));
+      }
+      System.out.print(recordMatch);
+      user_waiting.remove(0);
+      user_waiting.remove(0);
+    }
+  }
   @PostMapping("/reload")
   public GameXORes loadGame(@RequestBody GameXORequest gameXORequest) {
     System.out.println(gameXORequest);
-    GameXOPlaying gameXOPlaying =gameXOService.matchPlaying(gameXORequest.getId_match());
-    return new GameXORes(gameXOPlaying,gameXORequest.getId_user(),RELOAD);
+    GameXOPlaying gameXOPlaying =gameXOService.matchPlaying(gameXORequest.getMatch_id());
+    return new GameXORes(gameXOPlaying);
   }
 
   @MessageMapping("/xo/1/**")
   public  void playing(GameXORequest gameXORequest) throws Exception {
-    int id_match = gameXORequest.getId_match();
+    System.out.println(gameXORequest);
+    int match_id = gameXORequest.getMatch_id();
     int status = gameXORequest.getStatus();
-    GameXOPlaying gameXOPlaying = gameXOService.matchPlaying(id_match);
+    GameXOPlaying gameXOPlaying = gameXOService.matchPlaying(match_id);
 
     if (gameXOPlaying == null)
       return;
 
     if (status == START) {
       gameXOPlaying.startPlay(START);
-      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new GameXORes(gameXOPlaying));
+      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + match_id, new GameXORes(gameXOPlaying));
       return;
     }
 
@@ -74,20 +125,20 @@ public class GameXOController {
       player.setStatus(READY);
       gameXOPlaying.setStatus(READY);
       if(!gameXOPlaying.isGameXOReady(READY)){
-        System.out.println(gameXOPlaying);
-        simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new ReponsePlayer(gameXOPlaying));
+        System.out.println("READAY");
+        simpMessagingTemplate.convertAndSend("/topic/xo/1/" + match_id, new ReponsePlayer(gameXOPlaying));
         return;
       }
       gameXOPlaying.startPlay(PLAY);
-      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new GameXORes(gameXOPlaying));
+      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + match_id, new GameXORes(gameXOPlaying));
       return;
     }
 
     if(status == MESSAGE){
       System.out.println("Messs");
-      GameXOPlayer player = gameXOPlaying.getPlayerByType(gameXORequest.getType());
+      GameXOPlayer player = gameXOPlaying.getPlayerById(gameXORequest.getUser_id());
       gameXOPlaying.setStatus(MESSAGE);
-      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new GameXOMessage(player, gameXORequest.getMessage(), MESSAGE));
+      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + match_id, new GameXOMessage(player, gameXORequest.getMessage(), MESSAGE));
       return ;
     }
 
@@ -97,33 +148,38 @@ public class GameXOController {
       else {
         gameXOPlaying.randomPlay();
       }
+      gameXOPlaying.setStatus(PLAY);
       gameXOPlaying.setTurn();
       int winner = gameXOPlaying.winner();
       if(winner!=0){
         gameXOPlaying.undateAfterGame(winner);
-        GameXOPlayer player1=gameXOPlaying.getPlayer1();
-        GameXOPlayer player2=gameXOPlaying.getPlayer2();
-        userRepository.updateGoldExp(player1.getGold(), player1.getExp(),player1.getId());
-        userRepository.updateGoldExp(player2.getGold(), player2.getExp(),player2.getId());
         gameXOPlaying.playAgain(END_GAME);
       }
-      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match,new Play(gameXOPlaying));
+      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + match_id,new Play(gameXOPlaying));
+      if(winner!=0){
+        GameXOPlayer player1=gameXOPlaying.getPlayer1();
+        GameXOPlayer player2=gameXOPlaying.getPlayer2();
+        String data = player1.getId()+"@#$"+player1.getPoint()+"@#$"+player2.getId()+"@#$"+player2.getPoint();
+        recordMatchReposity.updateData(data, match_id);
+        userRepository.updateGoldExp(player1.getGold(), player1.getExp(),player1.getId());
+        userRepository.updateGoldExp(player2.getGold(), player2.getExp(),player2.getId());
+      }
       return;
 
     }
 
      // khi 1 player huỷ trận
      if (status == CANCEL) {
-      gameXOPlaying.getPlayerByType(gameXORequest.getType()).setStatus(CANCEL);
+      GameXOPlayer player = gameXOPlaying.getPlayerByType(gameXORequest.getType());
+      player.setStatus(CANCEL);
       if(gameXOPlaying.getStatus()!= CANCEL){
         gameXOPlaying.setStatus(CANCEL);
-        gamePlayReposity.finishPlayGame(id_match, CANCEL);
-        userRepository.updateStatus(0, gameXOPlaying.getPlayer1().getId());
-        userRepository.updateStatus(0, gameXOPlaying.getPlayer2().getId());
       }else{
-         gameXOService.deletePlaying(id_match);
+         gameXOService.deletePlaying(match_id);
+         recordMatchReposity.updateStatus(END_GAME, match_id);
       }
-      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new ReponsePlayer(gameXOPlaying));
+      simpMessagingTemplate.convertAndSend("/topic/xo/1/" + match_id, new ReponsePlayer(gameXOPlaying));
+      userRepository.updateStatus(0, player.getId());
       return;
     }
 
@@ -133,12 +189,12 @@ public class GameXOController {
       player.setStatus(PLAY_AGAIN);
       if(!gameXOPlaying.isGameXOPlayAgain(PLAY_AGAIN)){
         gameXOPlaying.setStatus(PLAY_AGAIN);
-        simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new ReponsePlayer(gameXOPlaying));
+        simpMessagingTemplate.convertAndSend("/topic/xo/1/" + match_id, new ReponsePlayer(gameXOPlaying));
         return;
       }
         gameXOPlaying.setBoard();
         gameXOPlaying.playAgain(START);
-        simpMessagingTemplate.convertAndSend("/topic/xo/1/" + id_match, new GameXORes(gameXOPlaying));
+        simpMessagingTemplate.convertAndSend("/topic/xo/1/" + match_id, new GameXORes(gameXOPlaying));
       return;
     }
 

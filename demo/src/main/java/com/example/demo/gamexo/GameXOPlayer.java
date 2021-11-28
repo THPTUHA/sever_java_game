@@ -10,8 +10,9 @@ public class GameXOPlayer {
     private long gold;
     private String name;
     private String nick_name;
-    private int status;
+    private int status = 1;
     private String avatar;
+    private int point = 0;
 
     public GameXOPlayer(){}
     public GameXOPlayer(User user,int type){
@@ -33,6 +34,13 @@ public class GameXOPlayer {
     public void setGold(long m){this.gold+= m*50;}
     public int getStatus(){return this.status;}
     public void setStatus(int status){this.status=status;}
+    public int getPoint() {
+        return point;
+    }
+    public void setPoint(int m) {
+        this.point += m;
+        if(this.point < 0)this.point=0;
+    }
     public String getAvatar() {
         return avatar;
     }

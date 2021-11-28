@@ -1,4 +1,4 @@
-create table user(
+create table if not e user(
 	id int auto_increment key,
     first_name char(255),
     last_name char(255),
@@ -20,6 +20,37 @@ create table user(
     status int
 );
 
+
+create table if not exists game(
+	id int auto_increment primary key,
+    name text,
+    content text,
+    view int,
+	release_time datetime,
+    status int 
+)engine=InnoDB default charset=utf8;
+
+create table if not exists recordmatch(
+	id int auto_increment primary key,
+    start_time datetime,
+    status int ,
+	winner int,
+    data text
+)engine=InnoDB default charset=utf8;
+
+create table if not exists recordusergame(
+	id int auto_increment key,
+	game_id int,
+    match_id int,
+	user_id int,
+    opponent text,
+    status int,
+    foreign key(match_id) references recordmatch(id),
+    foreign key(user_id) references user(id),
+    foreign key(game_id) references game(id)
+)engine=InnoDB default charset=utf8;
+
+
 create table news(
 	id int auto_increment key,
     title text,
@@ -36,12 +67,11 @@ create table news(
     user_name text,
 )
 
-create table play(
-	id int auto_increment key,
-	id_game int ,
-	player text ,
-    user_num int,
-    winner int,
-    status int,
-    start_time datetime
-);
+create table if not exists chat(
+	id int auto_increment primary key,
+    user_id int,
+    message text,
+	send_time datetime,
+    status int ,
+    foreign key(user_id) references user(id)
+)engine=InnoDB default charset=utf8;

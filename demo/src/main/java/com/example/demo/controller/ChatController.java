@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.gamexo.GameXOMessage;
 import com.example.demo.model.Chat;
 import com.example.demo.repository.ChatReposity;
 
@@ -25,8 +26,9 @@ public class ChatController {
    public List<Chat> getStartChat(){
      return  chatReposity.getChat();
    }
-   @MessageMapping("/chat/req")
-   public void chatting(Chat chat){
-        simpMessagingTemplate.convertAndSend("/chat/res" , chat);
+   @MessageMapping("/chat/**")
+   public void chatting(GameXOMessage chat){
+        System.out.println(chat);
+        simpMessagingTemplate.convertAndSend("/topic/chat" , chat);
    }
 }

@@ -27,6 +27,6 @@ public class GameXO {
     }
     // @Override 
     // public String toString(){
-    //     return "idMatch: "+this.id_match+ "\nidUser1:"+getId_user1() +"\nidUser2:"+getId_user2();
+    //     return "idMatch: "+this.match_id+ "\nidUser1:"+getId_user1() +"\nidUser2:"+getId_user2();
     // }
 }
