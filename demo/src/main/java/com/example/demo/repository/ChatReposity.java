@@ -16,7 +16,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ChatReposity extends JpaRepository<Chat,Integer>{
-    @Query(value = "SELECT * FROM chat c order by c.id asc  LIMIT 20",nativeQuery = true)
+    @Query(value = "SELECT * FROM chat c order by c.id desc  LIMIT 20",nativeQuery = true)
     List<Chat> getChat();
     @Modifying
     @Transactional

@@ -48,6 +48,15 @@ public class AdminController {
         return "FUCK";
     }
 
+    @PostMapping("/news/image")
+    public String getLink(@RequestParam("image") MultipartFile background_image){
+        try {
+            String link = cloudinaryService.uploadImage(background_image);
+            return link;
+        } catch (Exception e) {
+            return "Some thing worng!!";
+        }
+    }
     @PostMapping("/news/create")
     public String creatNews(@RequestParam("background_image") MultipartFile background_image,@RequestParam("title")String title,
     @RequestParam("describes")String describes,@RequestParam("content")String content,@RequestAttribute("id")int user_id){

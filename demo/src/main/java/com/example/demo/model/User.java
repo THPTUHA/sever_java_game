@@ -32,7 +32,7 @@ public class User implements Serializable{
     @Column(name="password")
     private String password;
     @Column(name="role")
-    private String role ="ROLE_GEST" ;
+    private String role ="ROLE_GUEST" ;
     @Column(name="avatar")
     private String avatar;
     @Column(name="address")

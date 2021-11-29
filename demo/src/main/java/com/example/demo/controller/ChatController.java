@@ -6,6 +6,8 @@ import com.example.demo.model.User;
 import com.example.demo.repository.ChatReposity;
 import com.example.demo.repository.UserRepository;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -30,6 +32,7 @@ public class ChatController {
    @GetMapping("/chat")
    public List<Chat> getStartChat(){
      chat =chatReposity.getChat();
+     Collections.reverse(chat);
      return  chat;
    }
    @MessageMapping("/chat/**")

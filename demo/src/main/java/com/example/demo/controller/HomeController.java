@@ -60,15 +60,16 @@ public class HomeController {
     
     @PostMapping("/login")
     public LoginResponse authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+        System.out.println(loginRequest);
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        System.out.println(loginRequest);
         User user = userRepository.findByEmail(loginRequest.getEmail());
         if(user.getRole().compareTo("ROLE_GEST")==0)return new LoginResponse();
         String jwt = tokenProvider.generateToken((CustomUserDetails) authentication.getPrincipal());
         userRepository.updateLastLogin(new Date(), loginRequest.getEmail());
+        System.out.println(jwt);
         return new LoginResponse(jwt);
     }
 
