@@ -8,7 +8,7 @@ create table if not e user(
     address char(255),
     avatar text,
     phone char(255),
-    discription text,
+    description text,
     sex int,
     facebook text,
     last_login date,
@@ -30,23 +30,25 @@ create table if not exists game(
     status int 
 )engine=InnoDB default charset=utf8;
 
-create table if not exists recordmatch(
-	id int auto_increment primary key,
-    start_time datetime,
-    status int ,
-	winner int,
-    data text
-)engine=InnoDB default charset=utf8;
-
 create table if not exists recordusergame(
 	id int auto_increment key,
 	game_id int,
-    match_id int,
-	user_id int,
-    opponent text,
+    start_time int,
+	user_id_1 int,
+    user_id_2 int,
+    user_id_3 int,
+    user_id_4 int,
+    point_1 int,
+    point_2 int,
+    point_3 int,
+    point_4 int,
     status int,
-    foreign key(match_id) references recordmatch(id),
-    foreign key(user_id) references user(id),
+    winner int,
+    data text,
+    foreign key(user_id_1) references user(id),
+    foreign key(user_id_2) references user(id),
+    foreign key(user_id_3) references user(id),
+    foreign key(user_id_4) references user(id),
     foreign key(game_id) references game(id)
 )engine=InnoDB default charset=utf8;
 

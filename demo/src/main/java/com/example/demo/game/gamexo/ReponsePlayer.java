@@ -1,4 +1,4 @@
-package com.example.demo.gamexo;
+package com.example.demo.game.gamexo;
 
 public class ReponsePlayer {
     private GameXOPlayer player1;

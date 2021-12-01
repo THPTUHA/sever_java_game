@@ -24,51 +24,93 @@ public class GamePlay implements Serializable{
     @ManyToOne
     @JoinColumn(name="game_id")
     private Game game;
-    @ManyToOne
-    @JoinColumn(name="match_id")
-    private RecordMatch record_match;
+    @Column(name="start_time")
+    private int start_time;
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="user_id")
-    private User user;
-    @Column(name="opponent")
-    private String opponent;
+    @JoinColumn(name="user_id_1")
+    private User user_1;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="user_id_2")
+    private User user_2;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="user_id_3")
+    private User user_3;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="user_id_4")
+    private User user_4;
+    @Column(name="point_1")
+    private int point_1;
+    @Column(name="point_2")
+    private int point_2;
+    @Column(name="point_3")
+    private int point_3;
+    @Column(name="point_4")
+    private int point_4;
     @Column(name="status")
     private int status;
+    @Column(name="winner")
+    private int winner;
+    @Column(name="data")
+    private String data;
 
     public int getStatus(){return this.status;}
     public void setStatus(int status){ this.status=status;}
     public GamePlay() {}
-    public GamePlay(User user,String opponent, Game game,RecordMatch recordMatch){
-        this.user =user;
-        this.opponent =opponent;
+    public GamePlay( Game game){
         this.game =game;
-        this.record_match =recordMatch;
     }
 
-   
     public int getId() {
-        return id;
-    }
-    public String getOpponent() {
-        return opponent;
-    }
-    
-    public String getData() {
-        return record_match.getData();
+        return this.id;
     }
 
-    public Date getStart_time() {
-        return record_match.getStart_time();
+    public Game getGame() {
+        return this.game;
     }
 
-    public int getGame_id(){
-        return this.game.getId();
+    public User getUser_1() {
+        return this.user_1;
     }
-    public String getGame_name(){
-        return game.getName();
+
+    public User getUser_2() {
+        return this.user_2;
     }
+
+    public User getUser_3() {
+        return this.user_3;
+    }
+
+    public User getUser_4() {
+        return this.user_4;
+    }
+
+    public int getPoint_1() {
+        return this.point_1;
+    }
+
+    public int getPoint_2() {
+        return this.point_2;
+    }
+
+    public int getPoint_3() {
+        return this.point_3;
+    }
+
+    public int getPoint_4() {
+        return this.point_4;
+    }
+   
+   public int getStart_time() {
+       return start_time;
+   }
+
+   public String getData() {
+       return data;
+   }
     @Override
     public String toString(){
-        return "id:"+this.id+"\noppent:";
+        return "id:"+this.id+"\nuser_1........\n"+this.user_1
+        +"\nuser_2........\n"+this.user_2+"\nuser_3........\n"+this.user_3
+        +"\nuser_4........\n"+this.user_4;
     }
 }

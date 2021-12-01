@@ -8,11 +8,14 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.JoinColumn;
 
 
 @Entity
@@ -39,7 +42,7 @@ public class User implements Serializable{
     private String address;
     @Column(name="phone")
     private String phone;
-    @Column(name="discription")
+    @Column(name="description")
     private String description;
     @Column(name="sex")
     private int sex;
@@ -59,32 +62,128 @@ public class User implements Serializable{
     private long gold;
     @Column(name="status")
     private int status;
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
-    private List<GamePlay>gameplay;
+    @OneToMany(mappedBy = "user_1",cascade = CascadeType.ALL)
+    private List<GamePlay>gameplay_1;
+    @OneToMany(mappedBy = "user_2",cascade = CascadeType.ALL)
+    private List<GamePlay>gameplay_2;
+    @OneToMany(mappedBy = "user_3",cascade = CascadeType.ALL)
+    private List<GamePlay>gameplay_3;
+    @OneToMany(mappedBy = "user_4",cascade = CascadeType.ALL)
+    private List<GamePlay>gameplay_4;
 
     public User(){}
     public User(String eamil,String password){
         this.email=eamil;
         this.password=password;
     }
-    public int getId(){return this.id;}
-    public String getFirst_name(){return this.first_name;}
-    public String getLast_name(){return this.last_name;}
-    public String getEmail(){return this.email;}
-    public String getPassword(){return this.password;}
-    public String getRole(){return this.role;}
-    public void setRole(String role) { this.role = role;  }
-    public String getAvatar(){return this.avatar;}
-    public boolean getExpired(){return this.expired;}
-    public int getSex(){return this.sex;}
-    public boolean getLocked(){return this.locked;}
-    public boolean getEnabled(){return this.enabled;}
-    public Date getLast_login(){return this.last_login;}
-    public long getExp(){return this.exp;}
-    public long getGold(){return this.gold;}
-    public void setPassword(String password){this.password=password;}
-    public int getStatus(){return this.status;}
-    public void setStatus(int status){ this.status = status;}
+
+    public int getId() {
+        return this.id;
+    }
+
+    public String getFirst_name() {
+        return this.first_name;
+    }
+
+    public String getLast_name() {
+        return this.last_name;
+    }
+
+    public String getEmail() {
+        return this.email;
+    }
+
+    public String getPassword() {
+        return this.password;
+    }
+
+    public String getRole() {
+        return this.role;
+    }
+
+    public String getAvatar() {
+        return this.avatar;
+    }
+
+    public String getAddress() {
+        return this.address;
+    }
+
+    public String getPhone() {
+        return this.phone;
+    }
+
+    public String getDescription() {
+        return this.description;
+    }
+
+    public int getSex() {
+        return this.sex;
+    }
+
+    public String getFacebook() {
+        return this.facebook;
+    }
+
+    public Date getLast_login() {
+        return this.last_login;
+    }
+
+    public boolean getExpired() {
+        return this.expired;
+    }
+
+    public boolean isExpired() {
+        return this.expired;
+    }
+
+    public boolean getLocked() {
+        return this.locked;
+    }
+
+    public boolean isLocked() {
+        return this.locked;
+    }
+
+    public boolean getEnabled() {
+        return this.enabled;
+    }
+
+    public boolean isEnabled() {
+        return this.enabled;
+    }
+
+    public long getExp() {
+        return this.exp;
+    }
+
+    public long getGold() {
+        return this.gold;
+    }
+
+    public int getStatus() {
+        return this.status;
+    }
+
+    public List<GamePlay> pickGameplay_1() {
+        return this.gameplay_1;
+    }
+
+    public List<GamePlay> pickGameplay_2() {
+        return this.gameplay_2;
+    }
+
+    public List<GamePlay> pickGameplay_3() {
+        return this.gameplay_3;
+    }
+
+    public List<GamePlay> pickGameplay_4() {
+        return this.gameplay_4;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
     public void setAvatar(String avatar) {
         this.avatar = avatar;
     }

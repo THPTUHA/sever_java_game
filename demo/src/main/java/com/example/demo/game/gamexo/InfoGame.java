@@ -1,4 +1,4 @@
-package com.example.demo.gamexo;
+package com.example.demo.game.gamexo;
 
 public class InfoGame {
     private int match_id;

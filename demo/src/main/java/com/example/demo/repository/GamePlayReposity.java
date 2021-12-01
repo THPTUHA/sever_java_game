@@ -1,5 +1,6 @@
 package com.example.demo.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -18,14 +19,16 @@ public interface GamePlayReposity extends JpaRepository<GamePlay,Integer>{
     GamePlay getOneMatch(@Param("status")int status);
     @Modifying
     @Transactional
-    @Query(value = "UPDATE play p SET p.player=:player, p.status=:status , p.user_num=:user_num WHERE p.id=:id",nativeQuery = true)
-    void updatePlayGame(@Param("id")int id, @Param("player")String player,@Param("status")int status,@Param("user_num")int user_num);
+    @Query(value = "UPDATE recordusergame p SET p.point_1=:point_1,p.point_2=:point_2,p.point_3=:point_3,p.point_4=:point_4, p.status=:status  WHERE p.id=:id",nativeQuery = true)
+    void updatePlayGame(@Param("id")int match_id, @Param("point_1")int point_1 ,@Param("point_2")int point_2,@Param("point_3")int point_3,@Param("point_4")int point_4,@Param("status")int status);
     @Modifying
     @Transactional
-    @Query(value = "INSERT recordusergame (game_id,match_id,user_id,opponent,status) values (:game_id,:match_id,:user_id,:opponent,:status)",nativeQuery = true)
-    void addRecord(@Param("game_id")int game_id,@Param("match_id")int match_id,@Param("user_id")int user_id,@Param("opponent")String opponent,@Param("status")int status);
+    @Query(value = "INSERT recordusergame (game_id,start_time,user_id_1,user_id_2,user_id_3,user_id_4,point_1,point_2,point_3,point_4,status,winner) values (:game_id,:start_time,:user_id_1,:user_id_2,:user_id_3,:user_id_4,:point_1,:point_2,:point_3,:point_4,:status,:winner)",nativeQuery = true)
+    void addRecord(@Param("game_id")int game_id,@Param("start_time")int start_time,@Param("user_id_1")int user_id_1,@Param("user_id_2")int user_id_2,@Param("user_id_3")int user_id_3,@Param("user_id_4")int user_id_4, @Param("point_1")int point_1 ,@Param("point_2")int point_2,@Param("point_3")int point_3,@Param("point_4")int point_4,@Param("status")int status,@Param("winner")int winner);
+    
     @Query(value = "SELECT * FROM recordusergame p  WHERE p.id=:id ",nativeQuery = true)
     GamePlay findById(@Param("id")int id);
-    @Query(value = "SELECT * FROM recordusergame p  WHERE p.user_id=:id ",nativeQuery = true)
-    List<GamePlay> getHistory(@Param("id")int user_id);
+    @Query(value = "SELECT id FROM recordusergame c order by c.id desc  LIMIT 1",nativeQuery = true)
+    int getMatchId();
+    
 }

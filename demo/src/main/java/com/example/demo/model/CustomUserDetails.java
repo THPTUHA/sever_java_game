@@ -14,6 +14,7 @@ public class CustomUserDetails implements UserDetails{
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority>roles = new HashSet<>();
+        System.out.println("ROLE>>>>>>>>>>>>>>>");
         roles.add(new SimpleGrantedAuthority(user.getRole()));
         return roles;
     }

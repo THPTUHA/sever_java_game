@@ -1,6 +1,8 @@
 package com.example.demo.config;
 
 
+import java.util.Arrays;
+
 import com.example.demo.CORSFilter;
 import com.example.demo.jwt.JwtAuthenticationFilter;
 import com.example.demo.service.UserService;
@@ -16,6 +18,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.session.SessionManagementFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -40,6 +46,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth)
             throws Exception {
+                System.out.println("FFGGGG");
         auth.userDetailsService(userService) 
             .passwordEncoder(passwordEncoder()); 
     }
@@ -50,17 +57,27 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return filter;
     }
 
+    // @Bean
+	// CorsConfigurationSource corsConfigurationSource() {
+    //     System.out.println("OKKKKKKK");
+	// 	CorsConfiguration configuration = new CorsConfiguration();
+	// 	configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+	// 	configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE"));
+	// 	UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+	// 	source.registerCorsConfiguration("/**", configuration);
+	// 	return source;
+	// }
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
+        http.addFilterBefore(corsFilter(), SessionManagementFilter.class)
             .csrf()
             .disable()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
+            // .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            // .and()
             .authorizeRequests()
             // .antMatchers("/admin").hasRole("ADMIN")
             // .antMatchers("/news/*").hasRole("USER")
-            // .antMatchers("/user/*").hasAnyRole("ADMIN","USER")
+            .antMatchers("/user/update_avatar").hasAnyRole("ADMIN","USER")
             // .antMatchers("/gameplay/xo/*").hasAnyRole("ADMIN","USER")
             // .antMatchers("/gameplay").hasAnyRole("ADMIN","USER")
             .anyRequest().permitAll()

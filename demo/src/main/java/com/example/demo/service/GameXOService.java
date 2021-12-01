@@ -3,9 +3,9 @@ package com.example.demo.service;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.example.demo.gamexo.GameXOPlaying;
-import com.example.demo.gamexo.GameXORequest;
-import com.example.demo.gamexo.InfoGame;
+import com.example.demo.game.gamexo.GameXOPlaying;
+import com.example.demo.game.gamexo.GameXORequest;
+import com.example.demo.game.gamexo.InfoGame;
 import com.example.demo.model.GamePlay;
 import com.example.demo.model.GameXO;
 import com.example.demo.model.User;

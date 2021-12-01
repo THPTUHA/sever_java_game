@@ -9,14 +9,21 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter{
     @Autowired
     private JwtTokenProvider tokenProvider;
+    @Autowired
+    private UserService customUserDetailsService;
     @Autowired
     private UserRepository userRepository;
     private String getJwtFromRequest(HttpServletRequest request) {
@@ -36,11 +43,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
             if(jwt==null) jwt = request.getParameter("token");
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt,response)) {
                 int user_id = tokenProvider.getUserIdFromJWT(jwt);
-                User user = userRepository.findById(user_id);
-                if(!user.getLocked())response.setStatus(403);
                 System.out.println("FUCCCCCCCCCCCCCCCCK "+ user_id);
+                UserDetails userDetails = customUserDetailsService.loadUserById(user_id);
                 request.setAttribute("id", user_id);
+                request.setAttribute("email",userDetails.getUsername());
+                if(userDetails != null) {
+                    UsernamePasswordAuthenticationToken
+                            authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
             }
+
+           
         } catch (Exception ex) {
             System.out.println("failed on set user authentication "+ ex);
         }

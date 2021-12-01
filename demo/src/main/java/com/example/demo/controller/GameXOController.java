@@ -1,22 +1,21 @@
 package com.example.demo.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 
-import com.example.demo.gamexo.GameXOPlayer;
-import com.example.demo.gamexo.GameXOPlaying;
-import com.example.demo.gamexo.GameXORequest;
-import com.example.demo.gamexo.GameXORes;
-import com.example.demo.gamexo.InfoGame;
-import com.example.demo.gamexo.Play;
-import com.example.demo.gamexo.ReponsePlayer;
+import com.example.demo.game.gamexo.GameXOPlayer;
+import com.example.demo.game.gamexo.GameXOPlaying;
+import com.example.demo.game.gamexo.GameXORequest;
+import com.example.demo.game.gamexo.GameXORes;
+import com.example.demo.game.gamexo.InfoGame;
+import com.example.demo.game.gamexo.Play;
+import com.example.demo.game.gamexo.ReponsePlayer;
 import com.example.demo.model.Game;
 import com.example.demo.model.GamePlay;
 import com.example.demo.model.Message;
-import com.example.demo.model.RecordMatch;
 import com.example.demo.model.User;
 import com.example.demo.repository.GamePlayReposity;
 import com.example.demo.repository.GameReposity;
-import com.example.demo.repository.RecordMatchReposity;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.GameXOService;
 
@@ -25,6 +24,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,8 +44,6 @@ public class GameXOController {
   private GamePlayReposity gamePlayReposity;
   @Autowired
   private UserRepository userRepository;
-  @Autowired
-  private RecordMatchReposity recordMatchReposity;
   @Autowired
   private GameReposity gameReposity;
 
@@ -74,30 +72,28 @@ public class GameXOController {
 
   @Scheduled(fixedDelay = 3000)
   public void handleMatch(){
-    Game game = gameReposity.findById(1);
+    if(user_waiting.size()>1){
+      Game game = gameReposity.findById(1);
+      int match_id = gamePlayReposity.getMatchId()+1;
     System.out.println("RUN");
     while(user_waiting.size()>1){
-      RecordMatch recordMatch =  recordMatchReposity.save(new RecordMatch());
-      String[] opponent =new String[2];
-      for(int i =0 ;i<2;++i){
-        User user = user_waiting.get(1-i);
-        opponent[i] ="id"+"@#$"+ user.getId()+"@#$first_name@#$"+user.getFirst_name()+"@#$last_name@#$"
-        +user.getLast_name()+"@#$avatar@#$"+user.getAvatar();
-      }
-      for(int i =0 ;i<2;++i){
-        gamePlayReposity.addRecord(game.getId(), recordMatch.getId(), user_waiting.get(i).getId(), opponent[i], 0);
-        userRepository.updateStatus(recordMatch.getId(),user_waiting.get(i).getId());
-      }
-      GameXOPlaying gameXOPlaying = new GameXOPlaying(recordMatch.getId(), user_waiting.get(0), user_waiting.get(1), START);
+      Date now =new Date();
+      gamePlayReposity.addRecord(game.getId(),(int)now.getTime()/1000 , user_waiting.get(0).getId(), user_waiting.get(1).getId(), 1,1,0,0,0,0 ,1,0);
+      userRepository.updateStatus(match_id,user_waiting.get(0).getId());
+      userRepository.updateStatus(match_id,user_waiting.get(1).getId());
+      GameXOPlaying gameXOPlaying = new GameXOPlaying(match_id, user_waiting.get(0), user_waiting.get(1), START);
       gameXOService.addMatch(gameXOPlaying);
       for(int i =0 ;i<2;++i){
         simpMessagingTemplate.convertAndSend("/topic/xo/wating/" + user_waiting.get(i).getId(), new GameXORes(gameXOPlaying));
       }
-      System.out.print(recordMatch);
       user_waiting.remove(0);
       user_waiting.remove(0);
+      match_id++;
+    }
     }
   }
+
+  
   @PostMapping("/reload")
   public GameXORes loadGame(@RequestBody GameXORequest gameXORequest) {
     System.out.println(gameXORequest);
@@ -159,8 +155,7 @@ public class GameXOController {
       if(winner!=0){
         GameXOPlayer player1=gameXOPlaying.getPlayer1();
         GameXOPlayer player2=gameXOPlaying.getPlayer2();
-        String data = player1.getId()+"@#$"+player1.getPoint()+"@#$"+player2.getId()+"@#$"+player2.getPoint();
-        recordMatchReposity.updateData(data, match_id);
+        gamePlayReposity.updatePlayGame(match_id, player1.getPoint(), player2.getPoint(), 0, 0, START);
         userRepository.updateGoldExp(player1.getGold(), player1.getExp(),player1.getId());
         userRepository.updateGoldExp(player2.getGold(), player2.getExp(),player2.getId());
       }
@@ -168,22 +163,24 @@ public class GameXOController {
 
     }
 
-     // khi 1 player huỷ trận
      if (status == CANCEL) {
       GameXOPlayer player = gameXOPlaying.getPlayerByType(gameXORequest.getType());
+      if(gameXOPlaying.getStatus() ==PLAY){
+        gameXOPlaying.undateAfterGame(3 - player.getType());
+      }
       player.setStatus(CANCEL);
       if(gameXOPlaying.getStatus()!= CANCEL){
         gameXOPlaying.setStatus(CANCEL);
+        gamePlayReposity.updatePlayGame(match_id, gameXOPlaying.getPlayer1().getPoint(), gameXOPlaying.getPlayer2().getPoint(), 0, 0,CANCEL);
       }else{
          gameXOService.deletePlaying(match_id);
-         recordMatchReposity.updateStatus(END_GAME, match_id);
       }
       simpMessagingTemplate.convertAndSend("/topic/xo/1/" + match_id, new ReponsePlayer(gameXOPlaying));
       userRepository.updateStatus(0, player.getId());
       return;
     }
 
-    // khi user sẵn sàng trận mới
+    
     if (status == PLAY_AGAIN) {
       GameXOPlayer player = gameXOPlaying.getPlayerByType(gameXORequest.getType());
       player.setStatus(PLAY_AGAIN);

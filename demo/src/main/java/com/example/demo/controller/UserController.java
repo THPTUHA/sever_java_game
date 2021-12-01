@@ -3,6 +3,8 @@ package com.example.demo.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.demo.LoginRequest;
+import com.example.demo.game.Match;
 import com.example.demo.model.GamePlay;
 import com.example.demo.model.User;
 import com.example.demo.repository.GamePlayReposity;
@@ -11,9 +13,14 @@ import com.example.demo.service.CloudinaryService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,6 +39,8 @@ public class UserController {
     AuthenticationManager authenticationManager;
     @Autowired
     CloudinaryService cloudinaryService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     ArrayList<Integer>a=new ArrayList<>();
     @GetMapping("/home")
     public String home(){
@@ -58,6 +67,28 @@ public class UserController {
        
     }
 
+    @PostMapping("/change_password")
+    public String changePassword(@RequestAttribute("id")int user_id,@RequestAttribute("email")String email, @RequestBody LoginRequest loginRequest){
+        System.out.print(loginRequest);
+        Authentication authentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(email, loginRequest.getPassword()));
+             SecurityContextHolder.getContext().setAuthentication(authentication);
+        try {
+            userRepository.updatePassword(passwordEncoder.encode(loginRequest.getNew_password()), user_id);
+        } catch (Exception e) {
+            return "Some thing wrong";
+        }
+        return "Success";
+    }
+    // @PostMapping("/change_password")
+    // public String changePassword(@RequestAttribute("id")int user_id,@RequestBody User user){
+    //     try {
+    //         userRepository.updateInfo(user.getPhone(),user.getDescription(), user_id);
+    //     } catch (Exception e) {
+    //         return "Some thing wrong";
+    //     }
+    //     return "Success";
+    // }
     @PostMapping("/update_avatar")
     public String update(@RequestParam("new_avatar")MultipartFile avatar ,@RequestAttribute int id ) {
         String link = cloudinaryService.uploadImage(avatar);
@@ -66,9 +97,34 @@ public class UserController {
     }
     
     @PostMapping("/gameplay/history")
-    public List<GamePlay> historyPlay(@RequestAttribute("id") int user_id){
-        List<GamePlay> game_play = gamePlayReposity.getHistory(user_id);
-           return game_play;
+    public List<List<Match>> historyPlay(@RequestAttribute("id") int user_id){
+        User user = userRepository.getGame(user_id);
+        List<List<Match>> match = new ArrayList<>();
+        List<Match> macth_sub_1 = new ArrayList<>();
+        List<GamePlay>game_play_1 = user.pickGameplay_1();
+        for(GamePlay a:game_play_1){
+            macth_sub_1.add(new Match(a));
+        }
+        List<Match> macth_sub_2 = new ArrayList<>();
+        List<GamePlay>game_play_2 = user.pickGameplay_2();
+        for(GamePlay a:game_play_2){
+            macth_sub_2.add(new Match(a));
+        }
+        List<Match> macth_sub_3 = new ArrayList<>();
+        List<GamePlay>game_play_3 = user.pickGameplay_3();
+        for(GamePlay a:game_play_3){
+            macth_sub_3.add(new Match(a));
+        }
+        List<Match> macth_sub_4 = new ArrayList<>();
+        List<GamePlay>game_play_4 = user.pickGameplay_4();
+        for(GamePlay a:game_play_4){
+            macth_sub_4.add(new Match(a));
+        }
+        match.add(macth_sub_1);
+        match.add(macth_sub_2);
+        match.add(macth_sub_3);
+        match.add(macth_sub_4);
+        return match;
       
     }
 }

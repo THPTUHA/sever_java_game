@@ -6,9 +6,12 @@ import com.example.demo.LoginRequest;
 import com.example.demo.LoginResponse;
 import com.example.demo.jwt.JwtTokenProvider;
 import com.example.demo.model.CustomUserDetails;
+import com.example.demo.model.Game;
 import com.example.demo.model.GamePlay;
 import com.example.demo.model.User;
 import com.example.demo.repository.GamePlayReposity;
+import com.example.demo.repository.GameReposity;
+import com.example.demo.repository.UserRepo;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.EmailSenderService;
 import com.example.demo.service.UserService;
@@ -17,6 +20,7 @@ import com.example.demo.model.Mail;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +46,8 @@ public class HomeController {
     @Autowired
     UserRepository userRepository;
     @Autowired
+    GameReposity gameReposity;
+    @Autowired
     AuthenticationManager authenticationManager;
     @Autowired
     private JwtTokenProvider tokenProvider;
@@ -51,6 +57,8 @@ public class HomeController {
     private EmailSenderService emailSenderService;
     @Autowired
     private GamePlayReposity gamePlayReposity;
+    @Autowired
+    private UserRepo userRepo;
     @Value("${Server}")
     String server;
     @Value("${Client}")
@@ -101,7 +109,13 @@ public class HomeController {
     }
     // @Scheduled(fixedDelay = 5000)
     // public void test(){
-    //     userRepository.deleteById(34);
-    //    System.out.println("OK");
+    //     // User user = userRepository.findById(33);
+    // //     Game game = gameReposity.findById(1);
+    // //     RecordMatch match = recordMatchReposity.findById(117);
+    // //    GamePlay  play = gamePlayReposity.save(new GamePlay(user," ",game,match));
+    //  List<User> user = userRepo.findById(33);
+    // //   User a = userRepository.getGame(33);
+    // //   System.out.println(a.getGameplay_1());
+    //    System.out.println(user.get(0).getGameplay_1());
     // }
 }
