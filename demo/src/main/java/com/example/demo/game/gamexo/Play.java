@@ -6,6 +6,7 @@ public class Play {
     private int[][] board;
     private int status;
     private int turn;
+    private long time;
 
     public Play(GameXOPlaying gameXOPlaying){
         this.player1 = gameXOPlaying.getPlayer1();
@@ -13,6 +14,7 @@ public class Play {
         this.board = gameXOPlaying.getBoard();
         this.status = gameXOPlaying.getStatus();
         this.turn = gameXOPlaying.getTurn();
+        this.time = gameXOPlaying.getTime_run();
     }
     public int getStatus() {
         return this.status;
@@ -32,5 +34,9 @@ public class Play {
 
     public int getTurn() {
         return this.turn;
+    }
+
+    public long getTime() {
+        return time;
     }
 }

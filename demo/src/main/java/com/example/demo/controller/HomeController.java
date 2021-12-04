@@ -4,11 +4,15 @@ import javax.validation.Valid;
 
 import com.example.demo.LoginRequest;
 import com.example.demo.LoginResponse;
+import com.example.demo.game.gameConcateWord.GameCWPlaying;
+import com.example.demo.game.gameConcateWord.PlayerCW;
 import com.example.demo.jwt.JwtTokenProvider;
 import com.example.demo.model.CustomUserDetails;
 import com.example.demo.model.Game;
 import com.example.demo.model.GamePlay;
 import com.example.demo.model.User;
+import com.example.demo.repository.ChatReposity;
+import com.example.demo.repository.DictionaryRepo;
 import com.example.demo.repository.GamePlayReposity;
 import com.example.demo.repository.GameReposity;
 import com.example.demo.repository.UserRepo;
@@ -19,8 +23,9 @@ import com.example.demo.model.Mail;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
+import java.util.Timer;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +64,10 @@ public class HomeController {
     private GamePlayReposity gamePlayReposity;
     @Autowired
     private UserRepo userRepo;
+    @Autowired
+    private DictionaryRepo dictionaryRepo;
+    @Autowired
+    private ChatReposity chatReposity;
     @Value("${Server}")
     String server;
     @Value("${Client}")
@@ -108,14 +117,19 @@ public class HomeController {
         return "Vào mail để xác minh";
     }
     // @Scheduled(fixedDelay = 5000)
-    // public void test(){
-    //     // User user = userRepository.findById(33);
-    // //     Game game = gameReposity.findById(1);
-    // //     RecordMatch match = recordMatchReposity.findById(117);
-    // //    GamePlay  play = gamePlayReposity.save(new GamePlay(user," ",game,match));
+    public void test(){
+        User user = userRepository.findById(33);
+    //     Game game = gameReposity.findById(1);
+    //     RecordMatch match = recordMatchReposity.findById(117);
+    //    GamePlay  play = gamePlayReposity.save(new GamePlay(user," ",game,match));
     //  List<User> user = userRepo.findById(33);
-    // //   User a = userRepository.getGame(33);
-    // //   System.out.println(a.getGameplay_1());
-    //    System.out.println(user.get(0).getGameplay_1());
-    // }
+    //   User a = userRepository.getGame(33);
+    //   System.out.println(a.getGameplay_1());
+    // Random random = new Random();
+    // System.out.println((char)(random.nextInt(26)+'a'));
+    // PlayerCW player =new PlayerCW(user,10);
+    //  GameCWPlaying gameCWPlaying = new GameCWPlaying(1, player,player,player,player, 4);
+    //  gameCWPlaying.downTime();
+       System.out.println(dictionaryRepo.checkWord("get"));
+    }
 }

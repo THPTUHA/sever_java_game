@@ -6,6 +6,7 @@ public class Message {
     private String avatar;
     private String message;
     private int status;
+    private int pos;
 
     public Message(int user_id,String user_name, String avatar, String message,int status) {
         this.user_id =user_id;
@@ -40,6 +41,9 @@ public class Message {
     }
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+    public int getPos() {
+        return pos;
     }
     @Override
     public String toString() {

@@ -77,3 +77,11 @@ create table if not exists chat(
     status int ,
     foreign key(user_id) references user(id)
 )engine=InnoDB default charset=utf8;
+
+create table if not exists recordconcatedword(
+	id int auto_increment primary key,
+    match_id int,
+    message text,
+    status int ,
+    foreign key(match_id) references recordusergame(id)
+)engine=InnoDB default charset=utf8;

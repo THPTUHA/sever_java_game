@@ -67,28 +67,29 @@ public class UserController {
        
     }
 
-    @PostMapping("/change_password")
-    public String changePassword(@RequestAttribute("id")int user_id,@RequestAttribute("email")String email, @RequestBody LoginRequest loginRequest){
-        System.out.print(loginRequest);
-        Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(email, loginRequest.getPassword()));
-             SecurityContextHolder.getContext().setAuthentication(authentication);
-        try {
-            userRepository.updatePassword(passwordEncoder.encode(loginRequest.getNew_password()), user_id);
-        } catch (Exception e) {
-            return "Some thing wrong";
-        }
-        return "Success";
-    }
     // @PostMapping("/change_password")
-    // public String changePassword(@RequestAttribute("id")int user_id,@RequestBody User user){
+    // public String changePassword(@RequestAttribute("id")int user_id,@RequestAttribute("email")String email, @RequestBody LoginRequest loginRequest){
+    //     System.out.print(loginRequest);
+    //     Authentication authentication = authenticationManager.authenticate(
+    //         new UsernamePasswordAuthenticationToken(email, loginRequest.getPassword()));
+    //          SecurityContextHolder.getContext().setAuthentication(authentication);
     //     try {
-    //         userRepository.updateInfo(user.getPhone(),user.getDescription(), user_id);
+    //         userRepository.updatePassword(passwordEncoder.encode(loginRequest.getNew_password()), user_id);
     //     } catch (Exception e) {
     //         return "Some thing wrong";
     //     }
     //     return "Success";
     // }
+    @PostMapping("/change_password")
+    public String changePassword(@RequestAttribute("id")int user_id,@RequestBody User user){
+        try {
+            userRepository.updateInfo(user.getPhone(),user.getDescription(), user_id);
+        } catch (Exception e) {
+            return "Some thing wrong";
+        }
+        return "Success";
+    }
+    
     @PostMapping("/update_avatar")
     public String update(@RequestParam("new_avatar")MultipartFile avatar ,@RequestAttribute int id ) {
         String link = cloudinaryService.uploadImage(avatar);

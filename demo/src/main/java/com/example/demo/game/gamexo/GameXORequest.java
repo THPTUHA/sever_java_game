@@ -9,7 +9,7 @@ public class GameXORequest {
     private int status=0;
     private String user_name;
     private String message="";
-    private boolean random;
+    private long time;
 
     public int getMatch_id() {
         return match_id;
@@ -23,10 +23,11 @@ public class GameXORequest {
     public int getStatus(){return this.status;}
     public String getUser_name(){return this.user_name;}
     public String getMessage(){return this.message;}
-    public boolean getRandom(){return this.random;}
+    public long getTime() {
+        return this.time;
+    }
     @Override 
     public String toString(){
-        return "user_id:"+user_id+"\nmatch_id:"+match_id+"\nX:"+coordinateX+"\nY:"+coordinateY+"\ntype:"+type
-        +"\nmessage:"+this.message+"\nstatus: "+ this.status+"\nrandom:"+this.random;
+        return "time:"+this.time;
     }
 }

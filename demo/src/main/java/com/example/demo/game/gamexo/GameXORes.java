@@ -6,6 +6,7 @@ public class GameXORes {
     private int type;
     private int status;
     private int turn;
+    private long time;
     private GameXOPlayer player1;
     private GameXOPlayer player2;
     
@@ -22,6 +23,7 @@ public class GameXORes {
         this.board = gameXOPlaying.getBoard();
         this.status =gameXOPlaying.getStatus();
         this.turn = gameXOPlaying.getTurn();
+        this.time = gameXOPlaying.getTime_run();
     }
 
     public GameXORes(GameXOPlaying gameXOPlaying, int id , int status) {
@@ -35,6 +37,10 @@ public class GameXORes {
         System.out.println("type game:"+this.type);
     }
 
+    public GameXORes(long time,int status){
+        this.time = time;
+        this.status = status;
+    }
     public int getMatch_id() {
         return match_id;
     }
@@ -69,5 +75,8 @@ public class GameXORes {
     
     public int getTurn() {
         return this.turn;
+    }
+    public long getTime() {
+        return time;
     }
 }

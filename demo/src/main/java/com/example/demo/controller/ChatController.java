@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,6 +37,12 @@ public class ChatController {
      Collections.reverse(chat);
      return  chat;
    }
+   @PostMapping("/chat/loading")
+   public List<Chat> getAddChat(@RequestBody Message message){
+     List<Chat> chat = chatReposity.loading(message.getPos());
+     Collections.reverse(chat);
+     return  chat;
+   }
    @MessageMapping("/chat/**")
    public void chatting(Message message){
         System.out.println(message);
@@ -44,6 +52,7 @@ public class ChatController {
           if(chat.size()>20) chat.remove(0);
           chat.add(new Chat(user,message.getMessage(),0));
           simpMessagingTemplate.convertAndSend("/topic/chat" , chat);
+          System.out.println(message);
           chatReposity.addChat(user.getId(), message.getMessage(), new Date(), 0);
         }
    }

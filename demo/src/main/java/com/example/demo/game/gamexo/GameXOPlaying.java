@@ -1,5 +1,7 @@
 package com.example.demo.game.gamexo;
 
+import java.util.Date;
+
 import com.example.demo.model.GameXO;
 import com.example.demo.model.User;
 
@@ -12,6 +14,8 @@ public class GameXOPlaying {
     private GameXOPlayer player2;
     private int turn = 1;
     private int status = 0;
+    private long time ;
+    private long time_run = 5;
 
     public GameXOPlaying(int match_id, User user1, User user2, int status) {
         this.game = new GameXO();
@@ -67,6 +71,11 @@ public class GameXOPlaying {
        return this.status;
     }
 
+    public void setTime() {
+        Date now = new Date();
+        this.time = now.getTime()/1000;
+        this.time_run = 5;
+    }
     public void startPlay(int play){
         this.status = play;
         this.player1.setStatus(play);
@@ -83,7 +92,21 @@ public class GameXOPlaying {
         if(this.player2.getId()==id)return this.player2;
         return null;
     }
+    public int checkTime(long tmp){
+        Date now = new Date();
+        this.time_run = 5 - now.getTime()/1000 + this.time ;
+        System.out.println(this.time_run+"// "+tmp);
+        if(this.time_run == tmp){
+            if(tmp <=0 )return -1;
+            return 1;
+        }
+        return 0;
+    }
 
+    public long getTime_run() {
+        return this.time_run;
+    }
+    
     public boolean isGameXOReady(int ready){
         return this.player1.getStatus()==ready && this.player2.getStatus()==ready;
     }

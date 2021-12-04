@@ -9,6 +9,7 @@ public class Player {
     private int point;
     private long exp;
 
+    public Player(){}
     public Player(User user,int point) {
         this.user_id = user.getId();
         this.name = user.getFirst_name()+" "+user.getLast_name();
@@ -36,5 +37,7 @@ public class Player {
     public long getExp() {
         return this.exp;
     }
-    
+    public void setPoint(int point) {
+        this.point += point;
+    }
 }
