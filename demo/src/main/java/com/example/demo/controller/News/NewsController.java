@@ -67,6 +67,7 @@ public class NewsController {
         try {
             Date  now = new Date();
             long since = (now.getTime()/1000);
+            comment.setSince(since);
             simpMessagingTemplate.convertAndSend("/topic/news/comment/" + comment.getNews_id(),comment);
             commentNewsRepo.addComment(comment.getNews_id(),user_id,comment.getContent(), since,comment.getStatus());
         } catch (Exception e) {

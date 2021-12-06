@@ -6,7 +6,8 @@ public class Comment {
     private int news_id;
     private String avatar;
     private String name;
-
+    private long since;
+    
     public String getContent() {
         return this.content;
     }
@@ -26,7 +27,13 @@ public class Comment {
     public String getName() {
         return name;
     }
+    public long getSince() {
+        return this.since;
+    }
     
+    public void setSince(long since){
+        this.since = since;
+    }
     @Override
     public String toString() {
         return "{" +

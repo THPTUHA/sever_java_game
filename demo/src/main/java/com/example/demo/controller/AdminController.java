@@ -65,7 +65,6 @@ public class AdminController {
     @PostMapping("/news/create")
     public Response creatNews(@RequestParam("background_image") MultipartFile background_image,@RequestParam("title")String title,
     @RequestParam("describes")String describes,@RequestParam("content")String content,@RequestAttribute("id")int user_id){
-        System.out.println("OK");
         if(background_image == null) return new Response(ERROR,"Thiếu ảnh");
         if(title =="") return new Response(ERROR,"Thiếu tiêu đề!!");
         if(describes=="")  return new Response(ERROR,"Thiếu mô tả!!");
@@ -75,7 +74,6 @@ public class AdminController {
             Date now = new Date();
             long  time =(now.getTime()/1000);
             newsRespository.addNews(user_id, content, title, describes,time,time, 1, link, 0, 0);
-            System.out.println("DONE");
         } catch (Exception e) {
             System.out.println(e);
             return new Response(ERROR,"Something wrong!!");
