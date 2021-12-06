@@ -68,7 +68,7 @@ public class GameConcatedWord {
 
     @PostMapping("/start")
     public String start(@RequestAttribute("id")int user_id){
-        System.out.println(user_id);
+        System.out.println("START"+user_id);
         User user = userRepository.findById(user_id);
         playerCWs.add(new PlayerCW(user, 0, START));
         return "Success";

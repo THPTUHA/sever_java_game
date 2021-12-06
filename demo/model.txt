@@ -53,21 +53,31 @@ create table if not exists recordusergame(
 )engine=InnoDB default charset=utf8;
 
 
-create table news(
+create table if not exists news(
 	id int auto_increment key,
     title text,
     describes text,
-    content text,
+    content mediumtext,
     user_id int,
-    last_update datetime,
-    time_create datetime,
+    last_update long,
+    time_create long,
     status int,
     view int,
     like_num int,
-    comment text,
     background_image text,
-    user_name text,
-)
+    foreign key(user_id) references user(id)
+)engine=InnoDB default charset=utf8;
+
+create table if not exists commentnews(
+	id int auto_increment primary key,
+    news_id int,
+    user_id int,
+    content text,
+    since long,
+    status int ,
+    foreign key(news_id) references news(id),
+    foreign key(user_id) references user(id)
+)engine=InnoDB default charset=utf8;
 
 create table if not exists chat(
 	id int auto_increment primary key,

@@ -104,6 +104,7 @@ public class GameXOController {
 
   @MessageMapping("/xo/1/**")
   public  void playing(GameXORequest gameXORequest) throws Exception {
+    System.out.print(gameXORequest);
     int match_id = gameXORequest.getMatch_id();
     int status = gameXORequest.getStatus();
     GameXOPlaying gameXOPlaying = gameXOService.matchPlaying(match_id);

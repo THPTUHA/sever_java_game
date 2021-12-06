@@ -6,7 +6,7 @@ import com.example.demo.model.User;
 public class PlayerCW extends Player{
     private int type;
     private int status;
-    private int blood = 1 ;
+    private int blood = 5 ;
 
     public PlayerCW(User user,int point,int status){
         super(user,point);

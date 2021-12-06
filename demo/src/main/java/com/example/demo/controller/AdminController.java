@@ -5,9 +5,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Date;
 import java.util.List;
 
 import com.cloudinary.Cloudinary;
+import com.example.demo.help.Response;
 import com.example.demo.model.News;
 import com.example.demo.model.User;
 import com.example.demo.repository.NewsRespository;
@@ -30,6 +32,9 @@ public class AdminController {
     private CloudinaryService cloudinaryService ;
     @Autowired
     private UserRepository userRepository;
+
+    private final int ERROR = 14;
+    private final int SUCCESS = 15;
 
     @GetMapping("/list_user")
     public List<User> listUser(){
@@ -58,20 +63,24 @@ public class AdminController {
         }
     }
     @PostMapping("/news/create")
-    public String creatNews(@RequestParam("background_image") MultipartFile background_image,@RequestParam("title")String title,
+    public Response creatNews(@RequestParam("background_image") MultipartFile background_image,@RequestParam("title")String title,
     @RequestParam("describes")String describes,@RequestParam("content")String content,@RequestAttribute("id")int user_id){
-        if(background_image == null) return "Thiếu background image!!";
-        if(title =="") return "Thiếu title!!";
-        if(describes=="") return "Thiếu mô tả";
-        if(content=="") return "Thiếu nội dung";
+        System.out.println("OK");
+        if(background_image == null) return new Response(ERROR,"Thiếu ảnh");
+        if(title =="") return new Response(ERROR,"Thiếu tiêu đề!!");
+        if(describes=="")  return new Response(ERROR,"Thiếu mô tả!!");
+        if(content=="") return new Response(ERROR,"Thiếu nội dung!!");
         try {
-            User user = userRepository.findById(user_id);
             String link = cloudinaryService.uploadImage(background_image);
-            newsRespository.save(new News(title,describes,link,content,user_id,user.getFirst_name()+" "+user.getLast_name()));
+            Date now = new Date();
+            long  time =(now.getTime()/1000);
+            newsRespository.addNews(user_id, content, title, describes,time,time, 1, link, 0, 0);
+            System.out.println("DONE");
         } catch (Exception e) {
-            return "Some thing worng!!";
+            System.out.println(e);
+            return new Response(ERROR,"Something wrong!!");
         }
-        return "SUCCESS";
+        return new Response(SUCCESS,"Đăng bài thành công");
     } 
     
     

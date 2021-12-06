@@ -15,6 +15,7 @@ import com.example.demo.repository.ChatReposity;
 import com.example.demo.repository.DictionaryRepo;
 import com.example.demo.repository.GamePlayReposity;
 import com.example.demo.repository.GameReposity;
+import com.example.demo.repository.NewsRespository;
 import com.example.demo.repository.UserRepo;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.EmailSenderService;
@@ -68,6 +69,8 @@ public class HomeController {
     private DictionaryRepo dictionaryRepo;
     @Autowired
     private ChatReposity chatReposity;
+    @Autowired
+    private NewsRespository newsRespository;
     @Value("${Server}")
     String server;
     @Value("${Client}")
@@ -116,20 +119,22 @@ public class HomeController {
        }
         return "Vào mail để xác minh";
     }
+    
     // @Scheduled(fixedDelay = 5000)
-    public void test(){
-        User user = userRepository.findById(33);
-    //     Game game = gameReposity.findById(1);
-    //     RecordMatch match = recordMatchReposity.findById(117);
-    //    GamePlay  play = gamePlayReposity.save(new GamePlay(user," ",game,match));
-    //  List<User> user = userRepo.findById(33);
-    //   User a = userRepository.getGame(33);
-    //   System.out.println(a.getGameplay_1());
-    // Random random = new Random();
-    // System.out.println((char)(random.nextInt(26)+'a'));
-    // PlayerCW player =new PlayerCW(user,10);
-    //  GameCWPlaying gameCWPlaying = new GameCWPlaying(1, player,player,player,player, 4);
-    //  gameCWPlaying.downTime();
-       System.out.println(dictionaryRepo.checkWord("get"));
-    }
+    // public void test(){
+    //     // User user = userRepository.findById(33);
+    // //     Game game = gameReposity.findById(1);
+    // //     RecordMatch match = recordMatchReposity.findById(117);
+    // //    GamePlay  play = gamePlayReposity.save(new GamePlay(user," ",game,match));
+    // //  List<User> user = userRepo.findById(33);
+    // //   User a = userRepository.getGame(33);
+    // //   System.out.println(a.getGameplay_1());
+    // // Random random = new Random();
+    // // System.out.println((char)(random.nextInt(26)+'a'));
+    // // PlayerCW player =new PlayerCW(user,10);
+    // //  GameCWPlaying gameCWPlaying = new GameCWPlaying(1, player,player,player,player, 4);
+    // //  gameCWPlaying.downTime();
+    // newsRespository.addNews(33, "AA","CC", "DD",0, 1, "??", 0, 0);
+    // //    System.out.println(dictionaryRepo.checkWord("get"));
+    // }
 }

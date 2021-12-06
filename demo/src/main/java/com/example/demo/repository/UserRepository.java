@@ -49,6 +49,9 @@ public interface UserRepository extends JpaRepository<User,Integer>{
         @Query(value = "SELECT DISTINCT u FROM User u  JOIN FETCH  u.gameplay_2 d   WHERE u.id=:id ")
         User getGame(@Param("id")int id);
         
+        @Query(value = "SELECT EXISTS (SELECT id FROM user WHERE user.id=:id)",nativeQuery = true)
+        int checkUser(@Param("id")int id);
+
         User findByEmail(String email);
         User findById(int id);
         void deleteById(int id);
