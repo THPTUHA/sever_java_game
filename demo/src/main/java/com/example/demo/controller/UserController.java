@@ -96,26 +96,26 @@ public class UserController {
         userRepository.updateAvatar(link, id);
         return link;
     }
-    
-    @PostMapping("/gameplay/history")
-    public List<List<Match>> historyPlay(@RequestAttribute("id") int user_id){
-        User user = userRepository.getGame(user_id);
+    private List<List<Match>> match(User user){
         List<List<Match>> match = new ArrayList<>();
         List<Match> macth_sub_1 = new ArrayList<>();
         List<GamePlay>game_play_1 = user.pickGameplay_1();
         for(GamePlay a:game_play_1){
             macth_sub_1.add(new Match(a));
         }
+        
         List<Match> macth_sub_2 = new ArrayList<>();
         List<GamePlay>game_play_2 = user.pickGameplay_2();
         for(GamePlay a:game_play_2){
             macth_sub_2.add(new Match(a));
         }
+
         List<Match> macth_sub_3 = new ArrayList<>();
         List<GamePlay>game_play_3 = user.pickGameplay_3();
         for(GamePlay a:game_play_3){
             macth_sub_3.add(new Match(a));
         }
+
         List<Match> macth_sub_4 = new ArrayList<>();
         List<GamePlay>game_play_4 = user.pickGameplay_4();
         for(GamePlay a:game_play_4){
@@ -126,6 +126,21 @@ public class UserController {
         match.add(macth_sub_3);
         match.add(macth_sub_4);
         return match;
-      
+    }
+    @PostMapping("/gameplay/history")
+    public List<List<Match>> historyPlay(@RequestAttribute("id") int user_id){
+        try {
+                User user = userRepository.getGame_1(user_id);
+                if(user!=null)return match(user);
+                user = userRepository.getGame_2(user_id);
+                if(user!=null)return match(user);
+                user = userRepository.getGame_3(user_id);
+                if(user!=null)return match(user);
+                user = userRepository.getGame_4(user_id);
+                if(user!=null)return match(user);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return null;
     }
 }

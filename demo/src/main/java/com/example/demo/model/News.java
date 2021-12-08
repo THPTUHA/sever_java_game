@@ -44,7 +44,7 @@ public class News {
     private int view;
     @Column(name="like_num")
     private int like_num;
-    @OneToMany(mappedBy = "news",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "news",cascade = CascadeType.MERGE)
     private List<CommentNews> comment;
     @Column(name="background_image")
     private String background_image;

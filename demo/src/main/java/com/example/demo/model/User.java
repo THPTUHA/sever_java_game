@@ -49,7 +49,7 @@ public class User implements Serializable{
     @Column(name="facebook")
     private String facebook;
     @Column(name="last_login")
-    private Date last_login;
+    private long last_login;
     @Column(name="expired")
     private boolean expired=true;
     @Column(name="locked")
@@ -125,7 +125,7 @@ public class User implements Serializable{
         return this.facebook;
     }
 
-    public Date getLast_login() {
+    public long getLast_login() {
         return this.last_login;
     }
 
@@ -189,6 +189,7 @@ public class User implements Serializable{
     }
     @Override
     public String toString(){
+        // System.out.println(gameplay_1);
         return "id: "+ id + "\nfirst_name: "+ first_name+"\nlast_name:"+last_name+"\nemail: "+email
         +"\npassword: "+password +"\nrole: "+role+"\naddress: "+address+"\nphone: "+phone
         +"\ndescription: "+description +"\nsex: "+sex+"\nfacebook: "+facebook+"\nlase_login: "+last_login

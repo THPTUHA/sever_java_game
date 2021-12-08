@@ -11,11 +11,14 @@ import java.util.List;
 
 import com.cloudinary.Cloudinary;
 import com.example.demo.model.Game;
+import com.example.demo.model.IndexGame;
+import com.example.demo.model.Message;
 import com.example.demo.model.News;
 import com.example.demo.model.User;
 import com.example.demo.repository.DictionaryRepo;
 import com.example.demo.repository.GamePlayReposity;
 import com.example.demo.repository.GameReposity;
+import com.example.demo.repository.IndexGameRepo;
 import com.example.demo.repository.NewsRespository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.CloudinaryService;
@@ -49,7 +52,9 @@ public class GameConcatedWord {
     private GameCWService gameCWService;
     @Autowired
     private DictionaryRepo dictionaryRepo;
-    
+    @Autowired
+    private IndexGameRepo indexGameRepo;
+
     private ArrayList<PlayerCW> playerCWs = new ArrayList<>();
 
     private final int START = 1;
@@ -77,12 +82,13 @@ public class GameConcatedWord {
     @Scheduled(fixedDelay = 3000)
     public void setUpMatch(){
         if(playerCWs.size()>=4){
-            Game game = gameReposity.findById(2);
-            int match_id = gamePlayReposity.getMatchId()+1;
+            Game game = gameReposity.findById(1);
+            IndexGame indexGame = indexGameRepo.save(new IndexGame(2));
+            int match_id = indexGame.getId();
             try {
                 while(playerCWs.size()>=4){
                     Date now =new Date();
-                    gamePlayReposity.addRecord(game.getId(),(int)(now.getTime()/1000 ), playerCWs.get(0).getUser_id(), playerCWs.get(1).getUser_id(), playerCWs.get(2).getUser_id(),playerCWs.get(3).getUser_id(),0,0,0,0 ,1,0);
+                    gamePlayReposity.addRecord(match_id,game.getId(),(int)(now.getTime()/1000 ), playerCWs.get(0).getUser_id(), playerCWs.get(1).getUser_id(), playerCWs.get(2).getUser_id(),playerCWs.get(3).getUser_id(),0,0,0,0 ,1,0);
                     GameCWPlaying gameCWPlaying =new GameCWPlaying(match_id, playerCWs.get(0), playerCWs.get(1), playerCWs.get(2),playerCWs.get(3), START);
                     gameCWService.addMatch(gameCWPlaying);
                     for(int i =0 ;i<4;++i){
@@ -180,6 +186,14 @@ public class GameConcatedWord {
                 System.out.println("NEW TURN "+ gameCWPlaying.getTurn());
                 simpMessagingTemplate.convertAndSend("/topic/cw/2/" + match_id, new PlayerRes(gameCWPlaying.getPlayer(), CANCEL,gameCWPlaying.getTurn()));
             }
+            return;
+        }
+
+        if(status == MESSAGE){
+            PlayerCW player = gameCWPlaying.pickPlayerByType(type);
+            if(player==null)return;
+            gameCWPlaying.setStatusGeneral(status);
+            simpMessagingTemplate.convertAndSend("/topic/xo/1/" + match_id, new Message(player.getName(),player.getAvatar(),cwRequest.getMessage(),MESSAGE));
             return;
         }
 

@@ -24,7 +24,7 @@ public class Game implements Serializable {
     @Column(name="view")
     private int view;
     @Column(name="release_time")
-    private Date release_time;
+    private long release_time;
     @Column(name="status")
     private int status;
     @OneToMany(mappedBy = "game",cascade = CascadeType.ALL)
@@ -42,8 +42,8 @@ public class Game implements Serializable {
     public String getName() {
         return name;
     }
-    public Date getRelease_time() {
-        return release_time;
+    public long getRelease_time() {
+        return this.release_time;
     }
     public int getStatus() {
         return status;

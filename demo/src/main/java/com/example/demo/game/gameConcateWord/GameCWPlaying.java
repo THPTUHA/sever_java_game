@@ -157,6 +157,9 @@ public class GameCWPlaying {
         this.status = status;
     }
 
+    public void setStatusGeneral(int status) {
+        this.status = status;
+    }
     public void setUnCheck() {
         for(PlayerCW p:player){
             if(p.getStatus()==PLAY){

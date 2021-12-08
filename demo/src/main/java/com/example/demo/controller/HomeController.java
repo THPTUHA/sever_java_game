@@ -6,6 +6,7 @@ import com.example.demo.LoginRequest;
 import com.example.demo.LoginResponse;
 import com.example.demo.game.gameConcateWord.GameCWPlaying;
 import com.example.demo.game.gameConcateWord.PlayerCW;
+import com.example.demo.help.Response;
 import com.example.demo.jwt.JwtTokenProvider;
 import com.example.demo.model.CustomUserDetails;
 import com.example.demo.model.Game;
@@ -76,6 +77,8 @@ public class HomeController {
     @Value("${Client}")
     String client;
 
+    private final int ERROR = 14;
+    private final int SUCCESS = 15;
     private ArrayList<Mail>emails = new ArrayList<>();
     
     @PostMapping("/login")
@@ -88,7 +91,9 @@ public class HomeController {
         User user = userRepository.findByEmail(loginRequest.getEmail());
         if(user.getRole().compareTo("ROLE_GEST")==0)return new LoginResponse();
         String jwt = tokenProvider.generateToken((CustomUserDetails) authentication.getPrincipal());
-        userRepository.updateLastLogin(new Date(), loginRequest.getEmail());
+        Date now = new Date();
+        long time = now.getTime()/1000;
+        userRepository.updateLastLogin(time, loginRequest.getEmail());
         System.out.println(jwt);
         return new LoginResponse(jwt);
     }
@@ -102,11 +107,24 @@ public class HomeController {
         String link =client+"/login";
         return "Click here to login :"+link;
     }
+    private boolean checkEmail(String email){
+        int n =email.length();
+        if(n<=10)return false;
+        String sub = email.substring(n-10, n);
+        if(sub.compareTo("@gmail.com")!=0)return false;
+        return true;
+
+    }
     @PostMapping("/register")
-    public String signUp(@RequestBody User user) {
+    public Response signUp(@RequestBody User user) {
+        if(user.getFirst_name()==null)return new Response(ERROR,"Thiếu first name");
+        if(user.getLast_name()==null)return new Response(ERROR,"Thiếu last name");
+        if(user.getEmail()==null)return new Response(ERROR,"Thiếu email");
+        if(user.getPassword()==null)return new Response(ERROR,"Thiếu password");
+        if(!checkEmail(user.getEmail()))return new Response(ERROR,"Sai email!!");
         System.out.println(user);
         User user_exist = userRepository.findByEmail(user.getEmail());
-        if(user_exist != null)return "Email đã tồn tại";
+        if(user_exist != null)return new Response(ERROR, "Email đã tồn tại");
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setAvatar("https://avatars.dicebear.com/api/micah/"+user.getFirst_name()  + user.getLast_name()+".svg");
         User new_user = userRepository.save(user);
@@ -116,8 +134,9 @@ public class HomeController {
         emailSenderService.sendSimpleEmail(user.getEmail(), "Click here to verify : "+link, "Verify");
        } catch (Exception e) {
            System.out.println(e);
-       }
-        return "Vào mail để xác minh";
+           return new Response(ERROR, "Something wrong!!");
+        }
+       return new Response(SUCCESS, "Vào mail để xác thực!!!");
     }
     
     // @Scheduled(fixedDelay = 5000)
@@ -134,7 +153,9 @@ public class HomeController {
     // // PlayerCW player =new PlayerCW(user,10);
     // //  GameCWPlaying gameCWPlaying = new GameCWPlaying(1, player,player,player,player, 4);
     // //  gameCWPlaying.downTime();
-    // newsRespository.addNews(33, "AA","CC", "DD",0, 1, "??", 0, 0);
-    // //    System.out.println(dictionaryRepo.checkWord("get"));
+    // // newsRespository.addNews(33, "AA","CC", "DD",0, 1, "??", 0, 0);
+    // //    System.out.println( userRepository.numberUser());
+    // // newsRespository.deleteComment(2);
+    // // newsRespository.deleteNews(2);
     // }
 }

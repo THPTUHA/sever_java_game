@@ -16,6 +16,13 @@ public class Message {
         this.status = status;
     }
 
+    public Message(String user_name, String avatar, String message,int status) {
+        this.user_name = user_name;
+        this.avatar = avatar;
+        this.message = message;
+        this.status = status;
+    }
+
     public int getUser_id() {
         return user_id;
     }

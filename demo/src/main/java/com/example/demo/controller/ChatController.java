@@ -44,7 +44,7 @@ public class ChatController {
      return  chat;
    }
    @MessageMapping("/chat/**")
-   public void chatting(Message message){
+   public void chatting(@RequestBody Message message){
         System.out.println(message);
         User user = userRepository.findById(message.getUser_id());
         if(user!=null)

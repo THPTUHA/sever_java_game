@@ -19,7 +19,7 @@ public interface UserRepository extends JpaRepository<User,Integer>{
         @Modifying
         @Transactional
         @Query(value = "UPDATE User u SET u.last_login=:last_login WHERE u.email=:email",nativeQuery = true)
-        void updateLastLogin(@Param("last_login")Date last_login,@Param("email")String email);
+        void updateLastLogin(@Param("last_login")long last_login,@Param("email")String email);
         @Modifying
         @Transactional
         @Query(value = "UPDATE User u SET u.gold=:gold, u.exp=:exp WHERE u.id=:id",nativeQuery = true)
@@ -46,11 +46,29 @@ public interface UserRepository extends JpaRepository<User,Integer>{
         @Query(value = "UPDATE User u SET u.role=:role WHERE u.id=:id",nativeQuery = true)
         void updateRole(@Param("role")String role, @Param("id")int id);
         
-        @Query(value = "SELECT DISTINCT u FROM User u  JOIN FETCH  u.gameplay_2 d   WHERE u.id=:id ")
-        User getGame(@Param("id")int id);
+        @Query(value = "SELECT DISTINCT u FROM User u  JOIN FETCH  u.gameplay_1  d   WHERE u.id=:id ")
+        User getGame_1(@Param("id")int id);
         
-        @Query(value = "SELECT EXISTS (SELECT id FROM user WHERE user.id=:id)",nativeQuery = true)
-        int checkUser(@Param("id")int id);
+        @Query(value = "SELECT DISTINCT u FROM User u  JOIN FETCH  u.gameplay_2  d   WHERE u.id=:id ")
+        User getGame_2(@Param("id")int id);
+
+        @Query(value = "SELECT DISTINCT u FROM User u  JOIN FETCH  u.gameplay_3  d   WHERE u.id=:id ")
+        User getGame_3(@Param("id")int id);
+
+        @Query(value = "SELECT DISTINCT u FROM User u  JOIN FETCH  u.gameplay_4  d   WHERE u.id=:id ")
+        User getGame_4(@Param("id")int id);
+
+        @Query(value = "select *  from user order by user.id desc limit 5 offset :pos ",nativeQuery = true)
+        List<User> loading(@Param("pos")int pos);
+
+        @Query(value = "select count(*) from user",nativeQuery = true)
+        int numberUser();
+
+         @Query(value = "select *  from user  where user.role=:role order by user.id desc  limit 5 offset :pos",nativeQuery = true)
+        List<User> loadingByRole(@Param("pos")int pos,@Param("role")String role);
+
+        @Query(value = "select count(*) from user where user.role=:role",nativeQuery = true)
+        int numberUserByRole(@Param("role")String role);
 
         User findByEmail(String email);
         User findById(int id);

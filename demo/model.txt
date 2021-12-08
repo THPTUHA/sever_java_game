@@ -11,7 +11,7 @@ create table if not e user(
     description text,
     sex int,
     facebook text,
-    last_login date,
+    last_login long,
     expired boolean,
     locked boolean,
     enabled boolean,
@@ -26,7 +26,7 @@ create table if not exists game(
     name text,
     content text,
     view int,
-	release_time datetime,
+	release_time long,
     status int 
 )engine=InnoDB default charset=utf8;
 
@@ -94,4 +94,9 @@ create table if not exists recordconcatedword(
     message text,
     status int ,
     foreign key(match_id) references recordusergame(id)
+)engine=InnoDB default charset=utf8;
+
+create table if not exists indexGame(
+	id int auto_increment primary key,
+	status int
 )engine=InnoDB default charset=utf8;

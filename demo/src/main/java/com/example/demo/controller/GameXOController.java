@@ -12,10 +12,12 @@ import com.example.demo.game.gamexo.Play;
 import com.example.demo.game.gamexo.ReponsePlayer;
 import com.example.demo.model.Game;
 import com.example.demo.model.GamePlay;
+import com.example.demo.model.IndexGame;
 import com.example.demo.model.Message;
 import com.example.demo.model.User;
 import com.example.demo.repository.GamePlayReposity;
 import com.example.demo.repository.GameReposity;
+import com.example.demo.repository.IndexGameRepo;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.GameXOService;
 
@@ -46,6 +48,8 @@ public class GameXOController {
   private UserRepository userRepository;
   @Autowired
   private GameReposity gameReposity;
+  @Autowired
+  private IndexGameRepo indexGameRepo;
 
   private ArrayList<User>user_waiting = new ArrayList<>();
 
@@ -76,11 +80,12 @@ public class GameXOController {
   public void handleMatch(){
     if(user_waiting.size()>1){
       Game game = gameReposity.findById(1);
-      int match_id = gamePlayReposity.getMatchId()+1;
+      IndexGame indexGame = indexGameRepo.save(new IndexGame(2));
+      int match_id = indexGame.getId();
     System.out.println("RUN");
     while(user_waiting.size()>1){
       Date now =new Date();
-      gamePlayReposity.addRecord(game.getId(),(int)now.getTime()/1000 , user_waiting.get(0).getId(), user_waiting.get(1).getId(), 1,1,0,0,0,0 ,1,0);
+      gamePlayReposity.addRecord(match_id,game.getId(),now.getTime()/1000 , user_waiting.get(0).getId(), user_waiting.get(1).getId(), 1,1,0,0,0,0 ,1,0);
       userRepository.updateStatus(match_id,user_waiting.get(0).getId());
       userRepository.updateStatus(match_id,user_waiting.get(1).getId());
       GameXOPlaying gameXOPlaying = new GameXOPlaying(match_id, user_waiting.get(0), user_waiting.get(1), START);

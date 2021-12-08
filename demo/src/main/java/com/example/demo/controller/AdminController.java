@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.cloudinary.Cloudinary;
+import com.example.demo.help.ListUser;
 import com.example.demo.help.Response;
 import com.example.demo.model.News;
 import com.example.demo.model.User;
@@ -36,9 +37,22 @@ public class AdminController {
     private final int ERROR = 14;
     private final int SUCCESS = 15;
 
-    @GetMapping("/list_user")
-    public List<User> listUser(){
-        return userRepository.findAll();
+    @PostMapping("/list_user")
+    public ListUser listUser(@RequestParam("pos")int pos,@RequestParam("selection")String selection){
+        try {
+            if(selection==null||selection.compareTo("NEWEST")==0){
+                int sz = userRepository.numberUser();
+                List<User> users = userRepository.loading(pos*5);
+                return new ListUser(users,sz);
+            }else {
+                int sz = userRepository.numberUserByRole(selection);
+                List<User> users = userRepository.loadingByRole(pos*5,selection);
+                return new ListUser(users,sz);
+            }
+        } catch (Exception e) {
+           System.out.println(e);
+        }
+        return null;
     }
 
     @PostMapping("/list_user/update")
@@ -62,6 +76,38 @@ public class AdminController {
             return "Some thing worng!!";
         }
     }
+
+    @PostMapping("/news/update")
+    public Response udpateNews(@RequestParam("background_image") MultipartFile background_image,@RequestParam("title")String title,
+    @RequestParam("describes")String describes,@RequestParam("content")String content,@RequestParam("id")int id,@RequestAttribute("id")int user_id){
+        if(background_image == null) return new Response(ERROR,"Thiếu ảnh");
+        if(title =="") return new Response(ERROR,"Thiếu tiêu đề!!");
+        if(describes=="")  return new Response(ERROR,"Thiếu mô tả!!");
+        if(content=="") return new Response(ERROR,"Thiếu nội dung!!");
+        try {
+            String link = cloudinaryService.uploadImage(background_image);
+            Date now = new Date();
+            long  time =(now.getTime()/1000);
+            newsRespository.updateNews(id,user_id, content, title, describes,time, 1, link);
+        } catch (Exception e) {
+            System.out.println(e);
+            return new Response(ERROR,"Something wrong!!");
+        }
+        return new Response(SUCCESS,"Cập nhật thành công!!");
+    } 
+
+    @PostMapping("/news/delete")
+    public Response deleteNews(@RequestParam("id")int id){
+        try {
+            newsRespository.deleteComment(id);
+            newsRespository.deleteNews(id);
+        } catch (Exception e) {
+            System.out.println(e);
+            return new Response(ERROR,"Something wrong!!");
+        }
+        return new Response(SUCCESS,"Xóa thành công!!");
+    }
+
     @PostMapping("/news/create")
     public Response creatNews(@RequestParam("background_image") MultipartFile background_image,@RequestParam("title")String title,
     @RequestParam("describes")String describes,@RequestParam("content")String content,@RequestAttribute("id")int user_id){

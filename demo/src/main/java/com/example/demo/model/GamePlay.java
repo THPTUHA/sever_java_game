@@ -25,7 +25,7 @@ public class GamePlay implements Serializable{
     @JoinColumn(name="game_id")
     private Game game;
     @Column(name="start_time")
-    private int start_time;
+    private long start_time;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="user_id_1")
     private User user_1;
@@ -100,7 +100,7 @@ public class GamePlay implements Serializable{
         return this.point_4;
     }
    
-   public int getStart_time() {
+   public long getStart_time() {
        return start_time;
    }
 

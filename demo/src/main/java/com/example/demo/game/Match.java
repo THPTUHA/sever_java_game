@@ -12,7 +12,7 @@ public class Match {
     private Player player_4;
     private int game_id;
     private int winner;
-    private int start_time;
+    private long start_time;
     private String data;
     private int staus;
     private String game_name;
@@ -47,7 +47,7 @@ public class Match {
         return this.winner;
     }
 
-    public int getStart_time() {
+    public long getStart_time() {
         return this.start_time;
     }
 
